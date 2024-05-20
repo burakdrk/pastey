@@ -11,25 +11,28 @@ import (
 )
 
 type ClipboardEntry struct {
+	ID            int64     `json:"id"`
 	EntryID       uuid.UUID `json:"entry_id"`
-	FromDeviceID  int32     `json:"from_device_id"`
-	ToDeviceID    int32     `json:"to_device_id"`
+	UserID        int64     `json:"user_id"`
+	FromDeviceID  int64     `json:"from_device_id"`
+	ToDeviceID    int64     `json:"to_device_id"`
 	EncryptedData string    `json:"encrypted_data"`
 	CreatedAt     time.Time `json:"created_at"`
 }
 
 type Device struct {
-	DeviceID   int32     `json:"device_id"`
-	UserID     int32     `json:"user_id"`
+	ID         int64     `json:"id"`
+	UserID     int64     `json:"user_id"`
 	DeviceName string    `json:"device_name"`
 	PublicKey  string    `json:"public_key"`
 	CreatedAt  time.Time `json:"created_at"`
 }
 
 type User struct {
-	UserID       int32     `json:"user_id"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"password_hash"`
-	Ispremium    bool      `json:"ispremium"`
-	CreatedAt    time.Time `json:"created_at"`
+	ID              int64     `json:"id"`
+	Email           string    `json:"email"`
+	PasswordHash    string    `json:"password_hash"`
+	Ispremium       bool      `json:"ispremium"`
+	Isemailverified bool      `json:"isemailverified"`
+	CreatedAt       time.Time `json:"created_at"`
 }

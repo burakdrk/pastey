@@ -7,12 +7,13 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (email, password_hash)
 VALUES ($1, $2)
-RETURNING user_id, email, password_hash, ispremium, created_at
+RETURNING id, email, password_hash, ispremium, isemailverified, created_at
 `
 
 type CreateUserParams struct {
@@ -24,10 +25,103 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.PasswordHash)
 	var i User
 	err := row.Scan(
-		&i.UserID,
+		&i.ID,
 		&i.Email,
 		&i.PasswordHash,
 		&i.Ispremium,
+		&i.Isemailverified,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users
+WHERE id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, id)
+	return err
+}
+
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, email, password_hash, ispremium, isemailverified, created_at
+FROM users
+WHERE email = $1
+LIMIT 1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Ispremium,
+		&i.Isemailverified,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getUserById = `-- name: GetUserById :one
+SELECT id, email, password_hash, ispremium, isemailverified, created_at
+FROM users
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Ispremium,
+		&i.Isemailverified,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateUser = `-- name: UpdateUser :one
+UPDATE users
+SET
+    password_hash = COALESCE($1, password_hash),
+    ispremium = COALESCE($2, ispremium),
+    isemailverified = COALESCE($3, isemailverified),
+    email = COALESCE($4, email)
+WHERE
+    id = $5
+RETURNING id, email, password_hash, ispremium, isemailverified, created_at
+`
+
+type UpdateUserParams struct {
+	PasswordHash    sql.NullString `json:"password_hash"`
+	Ispremium       sql.NullBool   `json:"ispremium"`
+	Isemailverified sql.NullBool   `json:"isemailverified"`
+	Email           sql.NullString `json:"email"`
+	ID              int64          `json:"id"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser,
+		arg.PasswordHash,
+		arg.Ispremium,
+		arg.Isemailverified,
+		arg.Email,
+		arg.ID,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Ispremium,
+		&i.Isemailverified,
 		&i.CreatedAt,
 	)
 	return i, err
