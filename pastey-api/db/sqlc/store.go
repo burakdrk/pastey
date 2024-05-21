@@ -49,20 +49,21 @@ type SaveCopyParams struct {
 	} `json:"copies"`
 }
 
-func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams) ([]ClipboardEntry, error) {
+func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams, tran int) ([]ClipboardEntry, error) {
 	var result []ClipboardEntry
 
-	advisoryLockID := int64(arg.UserID)
+	err := store.execTx(ctx, nil, func(q *Queries) error {
+		new_id := uuid.New()
+		new_time := time.Now().UTC()
 
-	err := store.execTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable}, func(q *Queries) error {
-		err := q.AcquireAdvisoryLock(ctx, advisoryLockID)
+		entries, err := q.GetEntryByUserForUpdate(ctx, arg.UserID)
 		if err != nil {
 			return err
 		}
-		defer q.ReleaseAdvisoryLock(ctx, advisoryLockID)
-
-		new_id := uuid.New()
-		new_time := time.Now().UTC()
+		fmt.Printf("Transaction %d: Found %d entries\n", tran, len(entries))
+		for _, entry := range entries {
+			fmt.Printf("Transaction %d: Entry %v\n", tran, entry.EntryID)
+		}
 
 		user, err := q.GetUserById(ctx, arg.UserID)
 		if err != nil {
@@ -75,11 +76,6 @@ func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams) ([]Clipboa
 			LIMIT = 15
 		} else {
 			LIMIT = 2
-		}
-
-		entries, err := q.GetEntryByUserForUpdate(ctx, arg.UserID)
-		if err != nil {
-			return err
 		}
 
 		// Delete the oldest entries.
@@ -101,6 +97,7 @@ func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams) ([]Clipboa
 				}
 
 				err = q.DeleteEntry(ctx, entry.EntryID)
+				fmt.Printf("Transaction %d: Deleted entry %v\n", tran, entry.EntryID)
 				if err != nil {
 					return err
 				}
@@ -124,6 +121,11 @@ func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams) ([]Clipboa
 
 			result = append(result, entry)
 		}
+
+		// _, err = q.GetEntryByUserForUpdate(ctx, arg.UserID)
+		// if err != nil {
+		// 	return err
+		// }
 
 		return nil
 	})

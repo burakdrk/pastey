@@ -12,15 +12,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const acquireAdvisoryLock = `-- name: AcquireAdvisoryLock :exec
-SELECT pg_advisory_lock($1)
-`
-
-func (q *Queries) AcquireAdvisoryLock(ctx context.Context, pgAdvisoryLock int64) error {
-	_, err := q.db.ExecContext(ctx, acquireAdvisoryLock, pgAdvisoryLock)
-	return err
-}
-
 const createEntry = `-- name: CreateEntry :one
 INSERT INTO clipboard_entries (entry_id, user_id, from_device_id, to_device_id, encrypted_data, created_at)
 VALUES ($1, $2, $3, $4, $5, $6)
@@ -181,13 +172,4 @@ func (q *Queries) GetEntryByUserForUpdate(ctx context.Context, userID int64) ([]
 		return nil, err
 	}
 	return items, nil
-}
-
-const releaseAdvisoryLock = `-- name: ReleaseAdvisoryLock :exec
-SELECT pg_advisory_unlock($1)
-`
-
-func (q *Queries) ReleaseAdvisoryLock(ctx context.Context, pgAdvisoryUnlock int64) error {
-	_, err := q.db.ExecContext(ctx, releaseAdvisoryLock, pgAdvisoryUnlock)
-	return err
 }

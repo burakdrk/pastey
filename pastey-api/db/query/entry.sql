@@ -25,9 +25,3 @@ FOR UPDATE;
 -- name: DeleteEntry :exec
 DELETE FROM clipboard_entries
 WHERE entry_id = $1;
-
--- name: AcquireAdvisoryLock :exec
-SELECT pg_advisory_lock($1);
-
--- name: ReleaseAdvisoryLock :exec
-SELECT pg_advisory_unlock($1);

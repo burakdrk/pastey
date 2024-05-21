@@ -11,7 +11,6 @@ import (
 )
 
 type Querier interface {
-	AcquireAdvisoryLock(ctx context.Context, pgAdvisoryLock int64) error
 	CreateDevice(ctx context.Context, arg CreateDeviceParams) (Device, error)
 	CreateEntry(ctx context.Context, arg CreateEntryParams) (ClipboardEntry, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
@@ -25,7 +24,6 @@ type Querier interface {
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserById(ctx context.Context, id int64) (User, error)
 	ListUserDevices(ctx context.Context, userID int64) ([]Device, error)
-	ReleaseAdvisoryLock(ctx context.Context, pgAdvisoryUnlock int64) error
 	UpdateDevice(ctx context.Context, arg UpdateDeviceParams) (Device, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
