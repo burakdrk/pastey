@@ -20,6 +20,7 @@ type Querier interface {
 	GetDeviceById(ctx context.Context, id int64) (Device, error)
 	GetEntriesForDevice(ctx context.Context, toDeviceID int64) ([]ClipboardEntry, error)
 	GetEntryByEntryId(ctx context.Context, entryID uuid.UUID) ([]ClipboardEntry, error)
+	GetEntryByUser(ctx context.Context, userID int64) ([]ClipboardEntry, error)
 	GetEntryByUserForUpdate(ctx context.Context, userID int64) ([]ClipboardEntry, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserById(ctx context.Context, id int64) (User, error)

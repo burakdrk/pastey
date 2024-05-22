@@ -5,10 +5,11 @@ import (
 	"testing"
 
 	"github.com/burakdrk/pastey/pastey-api/util"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
-func TestSaveCopy(t *testing.T) {
+func TestSaveCopy1(t *testing.T) {
 	store := NewStore(testDB)
 
 	user, err := store.GetUserById(context.Background(), 1)
@@ -87,7 +88,7 @@ func TestSaveCopy(t *testing.T) {
 			} else {
 				argg = arg2
 			}
-			result, err := store.SaveCopy(context.Background(), argg, i)
+			result, err := store.SaveCopy(context.Background(), argg)
 			t.Logf("Transaction %d: Error %v\n", i, err)
 			for _, entry := range result {
 				t.Logf("\tTransaction %d: %v\n", i, entry)
@@ -155,10 +156,10 @@ func TestSaveCopy2(t *testing.T) {
 	}
 
 	// run n concurrent transfer transaction
-	n := 4
+	n := 5
 	for i := 0; i < n; i++ {
 		go func(i int) {
-			result, err := store.SaveCopy(context.Background(), arg, i)
+			result, err := store.SaveCopy(context.Background(), arg)
 			t.Logf("Transaction %d: Error %v\n", i, err)
 			for _, entry := range result {
 				t.Logf("\tTransaction %d: %v\n", i, entry)
@@ -185,4 +186,19 @@ func TestSaveCopy2(t *testing.T) {
 			require.NotZero(t, entries[i].EntryID)
 		}
 	}
+
+	newEntires, err := testQueries.GetEntryByUser(context.Background(), user.ID)
+	require.NoError(t, err)
+	count := 0
+
+	seen := make(map[uuid.UUID]bool)
+	for _, entry := range newEntires {
+		if _, ok := seen[entry.EntryID]; ok {
+			continue
+		}
+		seen[entry.EntryID] = true
+		count++
+	}
+
+	require.Equal(t, 2, count)
 }

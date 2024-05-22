@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type Store struct {
@@ -23,21 +24,42 @@ func NewStore(db *sql.DB) *Store {
 
 // execTx executes a function within a database transaction.
 func (store *Store) execTx(ctx context.Context, options *sql.TxOptions, fn func(*Queries) error) error {
-	tx, err := store.db.BeginTx(ctx, options)
-	if err != nil {
-		return err
-	}
+	const maxRetries = 5
+	var err error
 
-	q := New(tx)
-	err = fn(q)
-	if err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return fmt.Errorf("tx error: %v, rb error: %v", err, rbErr)
+	for i := 0; i < maxRetries; i++ {
+		tx, err := store.db.BeginTx(ctx, options)
+		if err != nil {
+			return err
 		}
-		return err
+
+		q := New(tx)
+		err = fn(q)
+		if err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				return fmt.Errorf("tx error: %v, rb error: %v", err, rbErr)
+			}
+
+			if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "40001" {
+				continue
+			}
+
+			return err
+		}
+
+		err = tx.Commit()
+		if err != nil {
+			if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "40001" {
+				continue
+			}
+
+			return err
+		}
+
+		return nil
 	}
 
-	return tx.Commit()
+	return fmt.Errorf("transaction failed after %d retries: %w", maxRetries, err)
 }
 
 type SaveCopyParams struct {
@@ -49,10 +71,10 @@ type SaveCopyParams struct {
 	} `json:"copies"`
 }
 
-func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams, tran int) ([]ClipboardEntry, error) {
+func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams) ([]ClipboardEntry, error) {
 	var result []ClipboardEntry
 
-	err := store.execTx(ctx, nil, func(q *Queries) error {
+	err := store.execTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable}, func(q *Queries) error {
 		new_id := uuid.New()
 		new_time := time.Now().UTC()
 
@@ -60,10 +82,11 @@ func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams, tran int) 
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Transaction %d: Found %d entries\n", tran, len(entries))
-		for _, entry := range entries {
-			fmt.Printf("Transaction %d: Entry %v\n", tran, entry.EntryID)
-		}
+
+		// fmt.Printf("Transaction %d: Found %d entries\n", tran, len(entries))
+		// for _, entry := range entries {
+		// 	fmt.Printf("Transaction %d: Entry %v\n", tran, entry.EntryID)
+		// }
 
 		user, err := q.GetUserById(ctx, arg.UserID)
 		if err != nil {
@@ -97,7 +120,9 @@ func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams, tran int) 
 				}
 
 				err = q.DeleteEntry(ctx, entry.EntryID)
-				fmt.Printf("Transaction %d: Deleted entry %v\n", tran, entry.EntryID)
+
+				//fmt.Printf("Transaction %d: Deleted entry %v\n", tran, entry.EntryID)
+
 				if err != nil {
 					return err
 				}
@@ -121,11 +146,6 @@ func (store *Store) SaveCopy(ctx context.Context, arg SaveCopyParams, tran int) 
 
 			result = append(result, entry)
 		}
-
-		// _, err = q.GetEntryByUserForUpdate(ctx, arg.UserID)
-		// if err != nil {
-		// 	return err
-		// }
 
 		return nil
 	})

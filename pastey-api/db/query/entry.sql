@@ -15,12 +15,18 @@ FROM clipboard_entries
 WHERE entry_id = $1
 ORDER BY created_at DESC;
 
+-- name: GetEntryByUser :many
+SELECT *
+FROM clipboard_entries
+WHERE user_id = $1
+ORDER BY created_at DESC;
+
 -- name: GetEntryByUserForUpdate :many
 SELECT *
 FROM clipboard_entries
 WHERE user_id = $1
 ORDER BY created_at DESC
-FOR UPDATE;
+FOR NO KEY UPDATE;
 
 -- name: DeleteEntry :exec
 DELETE FROM clipboard_entries

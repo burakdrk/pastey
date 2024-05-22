@@ -135,12 +135,50 @@ func (q *Queries) GetEntryByEntryId(ctx context.Context, entryID uuid.UUID) ([]C
 	return items, nil
 }
 
+const getEntryByUser = `-- name: GetEntryByUser :many
+SELECT id, entry_id, user_id, from_device_id, to_device_id, encrypted_data, created_at
+FROM clipboard_entries
+WHERE user_id = $1
+ORDER BY created_at DESC
+`
+
+func (q *Queries) GetEntryByUser(ctx context.Context, userID int64) ([]ClipboardEntry, error) {
+	rows, err := q.db.QueryContext(ctx, getEntryByUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ClipboardEntry{}
+	for rows.Next() {
+		var i ClipboardEntry
+		if err := rows.Scan(
+			&i.ID,
+			&i.EntryID,
+			&i.UserID,
+			&i.FromDeviceID,
+			&i.ToDeviceID,
+			&i.EncryptedData,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getEntryByUserForUpdate = `-- name: GetEntryByUserForUpdate :many
 SELECT id, entry_id, user_id, from_device_id, to_device_id, encrypted_data, created_at
 FROM clipboard_entries
 WHERE user_id = $1
 ORDER BY created_at DESC
-FOR UPDATE
+FOR NO KEY UPDATE
 `
 
 func (q *Queries) GetEntryByUserForUpdate(ctx context.Context, userID int64) ([]ClipboardEntry, error) {
