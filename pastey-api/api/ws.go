@@ -1,34 +1,56 @@
 package api
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 
+	"github.com/burakdrk/pastey/pastey-api/token"
+	"github.com/burakdrk/pastey/pastey-api/ws"
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) handleWebSocket(ctx *gin.Context) {
+type wsRequest struct {
+	DeviceID int64 `form:"device_id" binding:"required,min=1"`
+}
+
+func (server *Server) serveWs(ctx *gin.Context, hub *ws.Hub) {
+	var req wsRequest
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	device, err := server.store.GetDeviceById(ctx, req.DeviceID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	if device.UserID != authPayload.UserID {
+		err := errors.New("Device doesn't belong to the user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	if _, ok := hub.Clients[authPayload.UserID][req.DeviceID]; ok {
+		err := errors.New("Device is already connected")
+		ctx.JSON(http.StatusConflict, errorResponse(err))
+		return
+	}
+
 	conn, err := server.upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	defer conn.Close()
+	client := ws.NewClient(conn, authPayload.UserID, req.DeviceID)
 
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-			return
-		}
+	hub.Register <- client
 
-		fmt.Println("Received message:", string(p), "from ", conn.RemoteAddr(), "type: ", messageType)
-
-		err = conn.WriteMessage(messageType, p)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-			return
-		}
-	}
+	go client.Write()
+	go client.Read(hub)
 }
