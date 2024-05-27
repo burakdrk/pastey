@@ -37,7 +37,7 @@ func (server *Server) copyEntry(ctx *gin.Context, hub *ws.Hub) {
 	if !slices.ContainsFunc(devices, func(d db.Device) bool {
 		return d.ID == req.FromDeviceID
 	}) {
-		err := errors.New("From_device_id doesn't belong to the user")
+		err := errors.New("from_device_id doesn't belong to the user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
@@ -45,7 +45,7 @@ func (server *Server) copyEntry(ctx *gin.Context, hub *ws.Hub) {
 	isDuplicate := make(map[int64]bool)
 	for _, copy := range req.Copies {
 		if _, ok := isDuplicate[copy.ToDeviceID]; ok {
-			err := errors.New("Duplicate to_device_id")
+			err := errors.New("duplicate to_device_id")
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
 			return
 		}
@@ -55,7 +55,7 @@ func (server *Server) copyEntry(ctx *gin.Context, hub *ws.Hub) {
 		if !slices.ContainsFunc(devices, func(d db.Device) bool {
 			return d.ID == copy.ToDeviceID
 		}) {
-			err := errors.New("To_device_id doesn't belong to the user")
+			err := errors.New("to_device_id doesn't belong to the user")
 			ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 			return
 		}

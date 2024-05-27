@@ -63,6 +63,11 @@ func (server *Server) setupRouter(hub *ws.Hub) {
 	authRouter := router.Group(apiBasePath).Use(authMiddleware(server.tokenMaker))
 
 	authRouter.GET("/users/:id", server.getUser)
+	authRouter.POST("/devices", server.createDevice)
+	authRouter.GET("/devices", server.listUserDevices)
+	authRouter.DELETE("/devices/:id", server.deleteDevice)
+	authRouter.GET("/devices/:id/entries", server.listDeviceEntries)
+	authRouter.DELETE("/entries/:id", server.deleteEntry)
 	authRouter.GET("/ws", func(c *gin.Context) {
 		server.serveWs(c, hub)
 	})

@@ -30,13 +30,13 @@ func (server *Server) serveWs(ctx *gin.Context, hub *ws.Hub) {
 	}
 
 	if device.UserID != authPayload.UserID {
-		err := errors.New("Device doesn't belong to the user")
+		err := errors.New("device doesn't belong to the user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
 	if _, ok := hub.Clients[authPayload.UserID][req.DeviceID]; ok {
-		err := errors.New("Device is already connected")
+		err := errors.New("device is already connected")
 		ctx.JSON(http.StatusConflict, errorResponse(err))
 		return
 	}
