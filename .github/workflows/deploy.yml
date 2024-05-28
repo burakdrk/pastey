@@ -10,6 +10,10 @@ jobs:
     name: Build image
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: pastey-api
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
