@@ -1,9 +1,6 @@
 postgres:
 	docker run --name pastey-db --network pastey-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:16-alpine
 
-api:
-	docker run --name pastey-api --network pastey-network -p 8080:8080 -e DB_SOURCE="postgresql://root:secret@pastey-db:5432/pastey?sslmode=disable" pastey-api:latest
-
 createdb:
 	docker exec -it pastey-db createdb --username=root --owner=root pastey
 
