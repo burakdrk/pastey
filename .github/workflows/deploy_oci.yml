@@ -56,5 +56,4 @@ jobs:
           REPOSITORY: ${{ steps.get-ocir-repository.outputs.repo_path }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker buildx build --platform linux/arm64 -t "$REPOSITORY:$IMAGE_TAG" .
-          docker push "$REPOSITORY:$IMAGE_TAG"
+          docker buildx build --platform linux/arm64 -t "$REPOSITORY:$IMAGE_TAG" . --push
