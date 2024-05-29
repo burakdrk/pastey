@@ -51,10 +51,32 @@ jobs:
         with:
           auth_token: ${{ secrets.OCI_AUTH_TOKEN }}
 
-      - name: Build, tag, and push docker image to OCIR
-        env:
-          REPOSITORY: ${{ steps.get-ocir-repository.outputs.repo_path }}
-          IMAGE_TAG: ${{ github.sha }}
+      # - name: Build, tag, and push docker image to OCIR
+      #   env:
+      #     REPOSITORY: ${{ steps.get-ocir-repository.outputs.repo_path }}
+      #     IMAGE_TAG: ${{ github.sha }}
+      #   run: |
+      #     docker buildx build --output type=docker --platform linux/arm64 -t "$REPOSITORY:$IMAGE_TAG" .
+      #     docker push "$REPOSITORY:$IMAGE_TAG"
+
+      - name: Retrieve the OCID of th current instance
+        uses: oracle-actions/run-oci-cli-command@v1.2.0
+        id: find-current-instance
+        with:
+          command: 'container-instances container-instance list -c ${{ secrets.OCI_COMPARTMENT_OCID }}'
+          query: "data.items[?\"lifecycle-state\"=='ACTIVE'].id"
+
+      - name: Print
         run: |
-          docker buildx build --output type=docker --platform linux/arm64 -t "$REPOSITORY:$IMAGE_TAG" .
-          docker push "$REPOSITORY:$IMAGE_TAG"
+          echo ${{ steps.find-current-instance.outputs.output }} | jq .
+  
+
+      # - name: Delete the current instance
+      #   uses: oracle-actions/run-oci-cli-command@v1.2.0
+      #   with:
+      #     command: 'container-instances container-instance delete --container-instance-id ${{ steps.find-current-instance.outputs.output.id }}'
+
+      # - name: Create a new instance
+      #   uses: oracle-actions/run-oci-cli-command@v1.2.0
+      #   with:
+      #     command: 'container-instances container-instance create --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --display-name pastey --subnet-id ${{ secrets.OCI_SUBNET_OCID }} --image "$REPOSITORY:$IMAGE_TAG" --shape VM.Standard.E3.Flex --assign-public-ip true'
