@@ -21,7 +21,7 @@ type Server struct {
 }
 
 const (
-	apiBasePath = "/api/v1"
+	apiBasePath = "/v1"
 )
 
 // NewServer creates a new HTTP server and set up routing
