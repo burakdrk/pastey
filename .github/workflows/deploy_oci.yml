@@ -60,4 +60,6 @@ jobs:
           docker push "$REPOSITORY:$IMAGE_TAG"
 
       - name: Execute python script
-        run: python3 scripts/deploy_oci.py
+        run: |
+          pip install -r ./scripts/requirements.txt
+          python3 scripts/deploy_oci.py ${{ secrets.OCI_COMPARTMENT_OCID }} ${{ secrets.OCI_SUBNET_OCID }} ${{ steps.get-ocir-repository.outputs.repo_path }} ${{ secrets.ADOMAIN }}
