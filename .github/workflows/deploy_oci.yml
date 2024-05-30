@@ -60,6 +60,10 @@ jobs:
           docker push "$REPOSITORY:$IMAGE_TAG"
 
       - name: Execute python script
+        env:
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CF_DNS_RECORD_ID: ${{ secrets.CF_DNS_RECORD_ID }}
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
         run: |
           pip install -r ./scripts/requirements.txt
-          python3 scripts/deploy_oci.py ${{ secrets.OCI_COMPARTMENT_OCID }} ${{ secrets.OCI_SUBNET_OCID }} ${{ steps.get-ocir-repository.outputs.repo_path }} ${{ secrets.ADOMAIN }}
+          python3 scripts/deploy_oci.py ${{ secrets.OCI_COMPARTMENT_OCID }} ${{ secrets.OCI_SUBNET_OCID }} ${{ steps.get-ocir-repository.outputs.repo_path }} ${{ secrets.ADOMAIN }} ${{ github.sha }}
