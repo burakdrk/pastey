@@ -106,7 +106,7 @@ headers = {
 
 data = {
     "type": "A",
-    "name": "api.@",
+    "name": "api",
     "content": public_ip,
     "ttl": 1,
     "proxied": True
