@@ -7,43 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		679FC10A2C0DA48B00C4A2AE /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1092C0DA48B00C4A2AE /* Color.swift */; };
+		679FC1102C0DA73F00C4A2AE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC10F2C0DA73F00C4A2AE /* HomeView.swift */; };
+		679FC1152C0F3A4200C4A2AE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1142C0F3A4200C4A2AE /* LoginView.swift */; };
+		679FC1182C0FBC9F00C4A2AE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1172C0FBC9F00C4A2AE /* LoginViewModel.swift */; };
+		679FC11B2C0FC0CE00C4A2AE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC11A2C0FC0CE00C4A2AE /* Constants.swift */; };
+		679FC11F2C0FC1F100C4A2AE /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */; };
 		67E51C452C083807000FBC55 /* pasteyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C442C083807000FBC55 /* pasteyApp.swift */; };
 		67E51C472C083807000FBC55 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C462C083807000FBC55 /* ContentView.swift */; };
 		67E51C492C083809000FBC55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67E51C482C083809000FBC55 /* Assets.xcassets */; };
 		67E51C4C2C083809000FBC55 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67E51C4B2C083809000FBC55 /* Preview Assets.xcassets */; };
-		67E51C562C083809000FBC55 /* pasteyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C552C083809000FBC55 /* pasteyTests.swift */; };
-		67E51C602C083809000FBC55 /* pasteyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C5F2C083809000FBC55 /* pasteyUITests.swift */; };
-		67E51C622C083809000FBC55 /* pasteyUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C612C083809000FBC55 /* pasteyUITestsLaunchTests.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		67E51C522C083809000FBC55 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 67E51C392C083807000FBC55 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 67E51C402C083807000FBC55;
-			remoteInfo = pastey;
-		};
-		67E51C5C2C083809000FBC55 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 67E51C392C083807000FBC55 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 67E51C402C083807000FBC55;
-			remoteInfo = pastey;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
+		679FC1092C0DA48B00C4A2AE /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		679FC10F2C0DA73F00C4A2AE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		679FC1142C0F3A4200C4A2AE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		679FC1172C0FBC9F00C4A2AE /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		679FC11A2C0FC0CE00C4A2AE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
 		67E51C412C083807000FBC55 /* pastey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pastey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		67E51C442C083807000FBC55 /* pasteyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pasteyApp.swift; sourceTree = "<group>"; };
 		67E51C462C083807000FBC55 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		67E51C482C083809000FBC55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		67E51C4B2C083809000FBC55 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		67E51C512C083809000FBC55 /* pasteyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pasteyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		67E51C552C083809000FBC55 /* pasteyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pasteyTests.swift; sourceTree = "<group>"; };
-		67E51C5B2C083809000FBC55 /* pasteyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pasteyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		67E51C5F2C083809000FBC55 /* pasteyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pasteyUITests.swift; sourceTree = "<group>"; };
-		67E51C612C083809000FBC55 /* pasteyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pasteyUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,29 +41,103 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		67E51C4E2C083809000FBC55 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		67E51C582C083809000FBC55 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		679FC1082C0DA47600C4A2AE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				679FC1092C0DA48B00C4A2AE /* Color.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		679FC10B2C0DA70F00C4A2AE /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				679FC1162C0F3A6600C4A2AE /* Components */,
+				679FC1112C0F372F00C4A2AE /* Login */,
+				679FC10C2C0DA71500C4A2AE /* Home */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		679FC10C2C0DA71500C4A2AE /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				679FC10E2C0DA72A00C4A2AE /* ViewModels */,
+				679FC10D2C0DA72400C4A2AE /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		679FC10D2C0DA72400C4A2AE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				679FC10F2C0DA73F00C4A2AE /* HomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		679FC10E2C0DA72A00C4A2AE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		679FC1112C0F372F00C4A2AE /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				679FC1132C0F3A3700C4A2AE /* ViewModels */,
+				679FC1122C0F3A2200C4A2AE /* Views */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		679FC1122C0F3A2200C4A2AE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				679FC1142C0F3A4200C4A2AE /* LoginView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		679FC1132C0F3A3700C4A2AE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				679FC1172C0FBC9F00C4A2AE /* LoginViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		679FC1162C0F3A6600C4A2AE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		679FC1192C0FC0C400C4A2AE /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				679FC11A2C0FC0CE00C4A2AE /* Constants.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		679FC11D2C0FC1AC00C4A2AE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		67E51C382C083807000FBC55 = {
 			isa = PBXGroup;
 			children = (
 				67E51C432C083807000FBC55 /* pastey */,
-				67E51C542C083809000FBC55 /* pasteyTests */,
-				67E51C5E2C083809000FBC55 /* pasteyUITests */,
 				67E51C422C083807000FBC55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,8 +146,6 @@
 			isa = PBXGroup;
 			children = (
 				67E51C412C083807000FBC55 /* pastey.app */,
-				67E51C512C083809000FBC55 /* pasteyTests.xctest */,
-				67E51C5B2C083809000FBC55 /* pasteyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,6 +153,10 @@
 		67E51C432C083807000FBC55 /* pastey */ = {
 			isa = PBXGroup;
 			children = (
+				679FC11D2C0FC1AC00C4A2AE /* Models */,
+				679FC1192C0FC0C400C4A2AE /* Utils */,
+				679FC1082C0DA47600C4A2AE /* Extensions */,
+				679FC10B2C0DA70F00C4A2AE /* Core */,
 				67E51C442C083807000FBC55 /* pasteyApp.swift */,
 				67E51C462C083807000FBC55 /* ContentView.swift */,
 				67E51C482C083809000FBC55 /* Assets.xcassets */,
@@ -108,23 +171,6 @@
 				67E51C4B2C083809000FBC55 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		67E51C542C083809000FBC55 /* pasteyTests */ = {
-			isa = PBXGroup;
-			children = (
-				67E51C552C083809000FBC55 /* pasteyTests.swift */,
-			);
-			path = pasteyTests;
-			sourceTree = "<group>";
-		};
-		67E51C5E2C083809000FBC55 /* pasteyUITests */ = {
-			isa = PBXGroup;
-			children = (
-				67E51C5F2C083809000FBC55 /* pasteyUITests.swift */,
-				67E51C612C083809000FBC55 /* pasteyUITestsLaunchTests.swift */,
-			);
-			path = pasteyUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,42 +193,6 @@
 			productReference = 67E51C412C083807000FBC55 /* pastey.app */;
 			productType = "com.apple.product-type.application";
 		};
-		67E51C502C083809000FBC55 /* pasteyTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 67E51C682C083809000FBC55 /* Build configuration list for PBXNativeTarget "pasteyTests" */;
-			buildPhases = (
-				67E51C4D2C083809000FBC55 /* Sources */,
-				67E51C4E2C083809000FBC55 /* Frameworks */,
-				67E51C4F2C083809000FBC55 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				67E51C532C083809000FBC55 /* PBXTargetDependency */,
-			);
-			name = pasteyTests;
-			productName = pasteyTests;
-			productReference = 67E51C512C083809000FBC55 /* pasteyTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		67E51C5A2C083809000FBC55 /* pasteyUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 67E51C6B2C083809000FBC55 /* Build configuration list for PBXNativeTarget "pasteyUITests" */;
-			buildPhases = (
-				67E51C572C083809000FBC55 /* Sources */,
-				67E51C582C083809000FBC55 /* Frameworks */,
-				67E51C592C083809000FBC55 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				67E51C5D2C083809000FBC55 /* PBXTargetDependency */,
-			);
-			name = pasteyUITests;
-			productName = pasteyUITests;
-			productReference = 67E51C5B2C083809000FBC55 /* pasteyUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -195,14 +205,6 @@
 				TargetAttributes = {
 					67E51C402C083807000FBC55 = {
 						CreatedOnToolsVersion = 15.1;
-					};
-					67E51C502C083809000FBC55 = {
-						CreatedOnToolsVersion = 15.1;
-						TestTargetID = 67E51C402C083807000FBC55;
-					};
-					67E51C5A2C083809000FBC55 = {
-						CreatedOnToolsVersion = 15.1;
-						TestTargetID = 67E51C402C083807000FBC55;
 					};
 				};
 			};
@@ -220,8 +222,6 @@
 			projectRoot = "";
 			targets = (
 				67E51C402C083807000FBC55 /* pastey */,
-				67E51C502C083809000FBC55 /* pasteyTests */,
-				67E51C5A2C083809000FBC55 /* pasteyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -236,20 +236,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		67E51C4F2C083809000FBC55 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		67E51C592C083809000FBC55 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -258,41 +244,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				67E51C472C083807000FBC55 /* ContentView.swift in Sources */,
+				679FC1102C0DA73F00C4A2AE /* HomeView.swift in Sources */,
+				679FC1182C0FBC9F00C4A2AE /* LoginViewModel.swift in Sources */,
 				67E51C452C083807000FBC55 /* pasteyApp.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		67E51C4D2C083809000FBC55 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				67E51C562C083809000FBC55 /* pasteyTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		67E51C572C083809000FBC55 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				67E51C622C083809000FBC55 /* pasteyUITestsLaunchTests.swift in Sources */,
-				67E51C602C083809000FBC55 /* pasteyUITests.swift in Sources */,
+				679FC11B2C0FC0CE00C4A2AE /* Constants.swift in Sources */,
+				679FC11F2C0FC1F100C4A2AE /* LoginModel.swift in Sources */,
+				679FC1152C0F3A4200C4A2AE /* LoginView.swift in Sources */,
+				679FC10A2C0DA48B00C4A2AE /* Color.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		67E51C532C083809000FBC55 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 67E51C402C083807000FBC55 /* pastey */;
-			targetProxy = 67E51C522C083809000FBC55 /* PBXContainerItemProxy */;
-		};
-		67E51C5D2C083809000FBC55 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 67E51C402C083807000FBC55 /* pastey */;
-			targetProxy = 67E51C5C2C083809000FBC55 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		67E51C632C083809000FBC55 /* Debug */ = {
@@ -425,11 +387,11 @@
 				DEVELOPMENT_TEAM = P8P545YJ97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = pastey;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -437,6 +399,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.burakduruk.pastey;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -454,11 +419,11 @@
 				DEVELOPMENT_TEAM = P8P545YJ97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = pastey;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -466,85 +431,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.burakduruk.pastey;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		67E51C692C083809000FBC55 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P8P545YJ97;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.burakduruk.pasteyTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pastey.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pastey";
-			};
-			name = Debug;
-		};
-		67E51C6A2C083809000FBC55 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P8P545YJ97;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.burakduruk.pasteyTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pastey.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pastey";
-			};
-			name = Release;
-		};
-		67E51C6C2C083809000FBC55 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P8P545YJ97;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.burakduruk.pasteyUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = pastey;
-			};
-			name = Debug;
-		};
-		67E51C6D2C083809000FBC55 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P8P545YJ97;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.burakduruk.pasteyUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = pastey;
 			};
 			name = Release;
 		};
@@ -565,24 +457,6 @@
 			buildConfigurations = (
 				67E51C662C083809000FBC55 /* Debug */,
 				67E51C672C083809000FBC55 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		67E51C682C083809000FBC55 /* Build configuration list for PBXNativeTarget "pasteyTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				67E51C692C083809000FBC55 /* Debug */,
-				67E51C6A2C083809000FBC55 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		67E51C6B2C083809000FBC55 /* Build configuration list for PBXNativeTarget "pasteyUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				67E51C6C2C083809000FBC55 /* Debug */,
-				67E51C6D2C083809000FBC55 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
