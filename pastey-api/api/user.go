@@ -10,6 +10,7 @@ import (
 	"github.com/burakdrk/pastey/pastey-api/token"
 	"github.com/burakdrk/pastey/pastey-api/util"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
@@ -106,8 +107,12 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string       `json:"access_token"`
-	User        userResponse `json:"user"`
+	SessionId             uuid.UUID    `json:"session_id"`
+	AccessToken           string       `json:"access_token"`
+	AccessTokenExpiresAt  time.Time    `json:"access_token_expires_at"`
+	RefreshToken          string       `json:"refresh_token"`
+	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
+	User                  userResponse `json:"user"`
 }
 
 func (server *Server) loginUser(ctx *gin.Context) {
@@ -135,9 +140,34 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	accessToken, err := server.tokenMaker.CreateToken(
+	accessToken, apayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		server.config.AccessTokenDuration,
+		false,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	refreshToken, rpayload, err := server.tokenMaker.CreateToken(
+		user.ID,
+		server.config.RefreshTokenDuration,
+		true,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
+		ID:           rpayload.ID,
+		RefreshToken: refreshToken,
+		UserID:       user.ID,
+		UserAgent:    ctx.Request.UserAgent(),
+		IpAddress:    ctx.ClientIP(),
+		ExpiresAt:    rpayload.ExpiresAt,
+	},
 	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -145,9 +175,46 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	rsp := loginUserResponse{
-		AccessToken: accessToken,
-		User:        newUserResponse(user),
+		AccessToken:           accessToken,
+		AccessTokenExpiresAt:  apayload.ExpiresAt,
+		User:                  newUserResponse(user),
+		SessionId:             session.ID,
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiresAt: rpayload.ExpiresAt,
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+type logoutUserRequest struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+
+func (server *Server) logoutUser(ctx *gin.Context) {
+	var req logoutUserRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	if !payload.IsRefresh {
+		err := errors.New("token is not a refresh token")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	err = server.store.DeleteSession(ctx, payload.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "logged out"})
 }
