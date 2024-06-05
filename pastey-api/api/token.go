@@ -32,6 +32,12 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 		return
 	}
 
+	if !payload.IsRefresh {
+		err := fmt.Errorf("token is not a refresh token")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	session, err := server.store.GetSession(ctx, payload.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -64,6 +70,7 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 	accessToken, apayload, err := server.tokenMaker.CreateToken(
 		payload.UserID,
 		server.config.AccessTokenDuration,
+		false,
 	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))

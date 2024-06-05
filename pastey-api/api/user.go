@@ -143,6 +143,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	accessToken, apayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		server.config.AccessTokenDuration,
+		false,
 	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -152,6 +153,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	refreshToken, rpayload, err := server.tokenMaker.CreateToken(
 		user.ID,
 		server.config.RefreshTokenDuration,
+		true,
 	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -182,4 +184,37 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+type logoutUserRequest struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+
+func (server *Server) logoutUser(ctx *gin.Context) {
+	var req logoutUserRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	if !payload.IsRefresh {
+		err := errors.New("token is not a refresh token")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	err = server.store.DeleteSession(ctx, payload.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "logged out"})
 }
