@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	CreateDevice(ctx context.Context, arg CreateDeviceParams) (Device, error)
 	CreateEntry(ctx context.Context, arg CreateEntryParams) (ClipboardEntry, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteDevice(ctx context.Context, id int64) error
 	DeleteEntry(ctx context.Context, entryID uuid.UUID) error
@@ -22,6 +23,7 @@ type Querier interface {
 	GetEntryByEntryId(ctx context.Context, entryID uuid.UUID) ([]ClipboardEntry, error)
 	GetEntryByUser(ctx context.Context, userID int64) ([]ClipboardEntry, error)
 	GetEntryByUserForUpdate(ctx context.Context, userID int64) ([]ClipboardEntry, error)
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserById(ctx context.Context, id int64) (User, error)
 	ListUserDevices(ctx context.Context, userID int64) ([]Device, error)

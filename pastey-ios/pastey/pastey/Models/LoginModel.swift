@@ -13,14 +13,6 @@ struct LoginRequest: Encodable {
 }
 
 struct LoginResponse: Decodable {
-    let user: LoginResponseUser
+    let user: User
     let access_token: String
-}
-
-struct LoginResponseUser: Decodable {
-    let id: Int64
-    let email: String
-    let ispremium: Bool
-    let isemailverified: Bool
-    let created_at: String
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		671742C22C0FF7A800B90D45 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671742C12C0FF7A800B90D45 /* UserModel.swift */; };
+		671742C52C0FF80D00B90D45 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671742C42C0FF80D00B90D45 /* AuthService.swift */; };
 		679FC10A2C0DA48B00C4A2AE /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1092C0DA48B00C4A2AE /* Color.swift */; };
 		679FC1102C0DA73F00C4A2AE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC10F2C0DA73F00C4A2AE /* HomeView.swift */; };
 		679FC1152C0F3A4200C4A2AE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1142C0F3A4200C4A2AE /* LoginView.swift */; };
@@ -20,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		671742C12C0FF7A800B90D45 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		671742C42C0FF80D00B90D45 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		679FC1092C0DA48B00C4A2AE /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		679FC10F2C0DA73F00C4A2AE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		679FC1142C0F3A4200C4A2AE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -44,6 +48,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		671742C32C0FF80000B90D45 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				671742C42C0FF80D00B90D45 /* AuthService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		679FC1082C0DA47600C4A2AE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */,
+				671742C12C0FF7A800B90D45 /* UserModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -153,6 +166,7 @@
 		67E51C432C083807000FBC55 /* pastey */ = {
 			isa = PBXGroup;
 			children = (
+				671742C32C0FF80000B90D45 /* Services */,
 				679FC11D2C0FC1AC00C4A2AE /* Models */,
 				679FC1192C0FC0C400C4A2AE /* Utils */,
 				679FC1082C0DA47600C4A2AE /* Extensions */,
@@ -250,6 +264,8 @@
 				679FC11B2C0FC0CE00C4A2AE /* Constants.swift in Sources */,
 				679FC11F2C0FC1F100C4A2AE /* LoginModel.swift in Sources */,
 				679FC1152C0F3A4200C4A2AE /* LoginView.swift in Sources */,
+				671742C52C0FF80D00B90D45 /* AuthService.swift in Sources */,
+				671742C22C0FF7A800B90D45 /* UserModel.swift in Sources */,
 				679FC10A2C0DA48B00C4A2AE /* Color.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

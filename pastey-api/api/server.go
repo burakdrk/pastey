@@ -59,6 +59,7 @@ func (server *Server) setupRouter(hub *ws.Hub) {
 
 	router.POST(apiBasePath+"/users", server.createUser)
 	router.POST(apiBasePath+"/users/login", server.loginUser)
+	router.POST(apiBasePath+"/token/refresh", server.renewAccessToken)
 
 	authRouter := router.Group(apiBasePath).Use(authMiddleware(server.tokenMaker))
 
