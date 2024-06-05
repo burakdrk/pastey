@@ -19,10 +19,11 @@ INSERT INTO sessions (
     refresh_token,
     user_agent,
     ip_address,
-    expires_at
+    expires_at,
+    device_id
 )
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, user_id, refresh_token, user_agent, ip_address, is_blocked, expires_at, created_at
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, user_id, refresh_token, user_agent, ip_address, is_blocked, expires_at, created_at, device_id
 `
 
 type CreateSessionParams struct {
@@ -32,6 +33,7 @@ type CreateSessionParams struct {
 	UserAgent    string    `json:"user_agent"`
 	IpAddress    string    `json:"ip_address"`
 	ExpiresAt    time.Time `json:"expires_at"`
+	DeviceID     int64     `json:"device_id"`
 }
 
 func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error) {
@@ -42,6 +44,7 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		arg.UserAgent,
 		arg.IpAddress,
 		arg.ExpiresAt,
+		arg.DeviceID,
 	)
 	var i Session
 	err := row.Scan(
@@ -53,6 +56,7 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		&i.IsBlocked,
 		&i.ExpiresAt,
 		&i.CreatedAt,
+		&i.DeviceID,
 	)
 	return i, err
 }
@@ -67,8 +71,18 @@ func (q *Queries) DeleteSession(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const deleteSessionsByDevice = `-- name: DeleteSessionsByDevice :exec
+DELETE FROM sessions
+WHERE device_id = $1
+`
+
+func (q *Queries) DeleteSessionsByDevice(ctx context.Context, deviceID int64) error {
+	_, err := q.db.ExecContext(ctx, deleteSessionsByDevice, deviceID)
+	return err
+}
+
 const getSession = `-- name: GetSession :one
-SELECT id, user_id, refresh_token, user_agent, ip_address, is_blocked, expires_at, created_at
+SELECT id, user_id, refresh_token, user_agent, ip_address, is_blocked, expires_at, created_at, device_id
 FROM sessions
 WHERE id = $1 LIMIT 1
 `
@@ -85,6 +99,7 @@ func (q *Queries) GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 		&i.IsBlocked,
 		&i.ExpiresAt,
 		&i.CreatedAt,
+		&i.DeviceID,
 	)
 	return i, err
 }

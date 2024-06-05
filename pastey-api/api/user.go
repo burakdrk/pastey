@@ -104,9 +104,16 @@ func (server *Server) getUser(ctx *gin.Context) {
 type loginUserRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
+	DeviceId int64  `json:"device_id" binding:"-"`
 }
 
-type loginUserResponse struct {
+type loginUserResponseWithoutDevice struct {
+	AccessToken          string       `json:"access_token"`
+	AccessTokenExpiresAt time.Time    `json:"access_token_expires_at"`
+	User                 userResponse `json:"user"`
+}
+
+type loginUserResponseWithDevice struct {
 	SessionId             uuid.UUID    `json:"session_id"`
 	AccessToken           string       `json:"access_token"`
 	AccessTokenExpiresAt  time.Time    `json:"access_token_expires_at"`
@@ -150,40 +157,75 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	refreshToken, rpayload, err := server.tokenMaker.CreateToken(
-		user.ID,
-		server.config.RefreshTokenDuration,
-		true,
-	)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
+	rsp := loginUserResponseWithoutDevice{
+		AccessToken:          accessToken,
+		AccessTokenExpiresAt: apayload.ExpiresAt,
+		User:                 newUserResponse(user),
 	}
 
-	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
-		ID:           rpayload.ID,
-		RefreshToken: refreshToken,
-		UserID:       user.ID,
-		UserAgent:    ctx.Request.UserAgent(),
-		IpAddress:    ctx.ClientIP(),
-		ExpiresAt:    rpayload.ExpiresAt,
-	},
-	)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
+	if req.DeviceId > 0 {
+		device, err := server.store.GetDeviceById(ctx, req.DeviceId)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				err := errors.New("device not found")
+				ctx.JSON(http.StatusNotFound, errorResponse(err))
+				return
+			}
 
-	rsp := loginUserResponse{
-		AccessToken:           accessToken,
-		AccessTokenExpiresAt:  apayload.ExpiresAt,
-		User:                  newUserResponse(user),
-		SessionId:             session.ID,
-		RefreshToken:          refreshToken,
-		RefreshTokenExpiresAt: rpayload.ExpiresAt,
-	}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
 
-	ctx.JSON(http.StatusOK, rsp)
+		if device.UserID != user.ID {
+			err := errors.New("device ID doesn't match with the authenticated user")
+			ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+			return
+		}
+
+		err = server.store.DeleteSessionsByDevice(ctx, req.DeviceId)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
+		refreshToken, rpayload, err := server.tokenMaker.CreateToken(
+			user.ID,
+			server.config.RefreshTokenDuration,
+			true,
+		)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
+		session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
+			ID:           rpayload.ID,
+			RefreshToken: refreshToken,
+			UserID:       user.ID,
+			UserAgent:    ctx.Request.UserAgent(),
+			IpAddress:    ctx.ClientIP(),
+			ExpiresAt:    rpayload.ExpiresAt,
+			DeviceID:     req.DeviceId,
+		},
+		)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
+		rsp := loginUserResponseWithDevice{
+			AccessToken:           accessToken,
+			AccessTokenExpiresAt:  apayload.ExpiresAt,
+			User:                  newUserResponse(user),
+			SessionId:             session.ID,
+			RefreshToken:          refreshToken,
+			RefreshTokenExpiresAt: rpayload.ExpiresAt,
+		}
+
+		ctx.JSON(http.StatusOK, rsp)
+	} else {
+		ctx.JSON(http.StatusOK, rsp)
+	}
 }
 
 type logoutUserRequest struct {

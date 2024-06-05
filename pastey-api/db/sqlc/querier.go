@@ -18,6 +18,7 @@ type Querier interface {
 	DeleteDevice(ctx context.Context, id int64) error
 	DeleteEntry(ctx context.Context, entryID uuid.UUID) error
 	DeleteSession(ctx context.Context, id uuid.UUID) error
+	DeleteSessionsByDevice(ctx context.Context, deviceID int64) error
 	DeleteUser(ctx context.Context, id int64) error
 	GetDeviceById(ctx context.Context, id int64) (Device, error)
 	GetEntriesForDevice(ctx context.Context, toDeviceID int64) ([]ClipboardEntry, error)
