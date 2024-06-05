@@ -3,15 +3,24 @@ package api
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	db "github.com/burakdrk/pastey/pastey-api/db/sqlc"
 	"github.com/burakdrk/pastey/pastey-api/token"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type createDeviceRequest struct {
 	DeviceName string `json:"device_name" binding:"required,min=1"`
 	PublicKey  string `json:"public_key" binding:"required,min=1"`
+}
+
+type createDeviceResponse struct {
+	db.Device             `json:"device"`
+	SessionId             uuid.UUID `json:"session_id"`
+	RefreshToken          string    `json:"refresh_token"`
+	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
 }
 
 func (server *Server) createDevice(ctx *gin.Context) {
@@ -40,7 +49,39 @@ func (server *Server) createDevice(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, device)
+	refreshToken, rpayload, err := server.tokenMaker.CreateToken(
+		device.UserID,
+		server.config.RefreshTokenDuration,
+		true,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
+		ID:           rpayload.ID,
+		RefreshToken: refreshToken,
+		UserID:       device.UserID,
+		UserAgent:    ctx.Request.UserAgent(),
+		IpAddress:    ctx.ClientIP(),
+		ExpiresAt:    rpayload.ExpiresAt,
+		DeviceID:     device.ID,
+	},
+	)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	rsp := createDeviceResponse{
+		Device:                device,
+		SessionId:             session.ID,
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiresAt: rpayload.ExpiresAt,
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 func (server *Server) canHaveMoreDevices(ctx *gin.Context, userID int64) bool {
@@ -154,4 +195,3 @@ func (server *Server) listDeviceEntries(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, entries)
 }
-
