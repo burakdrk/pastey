@@ -7,5 +7,5 @@
 
 import Foundation
 
-let kBaseURL = "https://api.burakduruk.com/v1"
+let API_URL = "https://api.burakduruk.com/v1"
 

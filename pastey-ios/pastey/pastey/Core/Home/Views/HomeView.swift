@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var auth: AuthViewModel
+    
     var body: some View {
-        Text("Hello, Wrld!")
+        VStack {
+            Text("Welcome, \(auth.user?.email ?? "User")")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.bottom, 30)
+        }
     }
 }
 
 #Preview {
     HomeView()
+        .environmentObject(AuthViewModel())
 }
