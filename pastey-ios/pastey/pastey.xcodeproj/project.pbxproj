@@ -7,32 +7,57 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		671742C22C0FF7A800B90D45 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671742C12C0FF7A800B90D45 /* UserModel.swift */; };
-		671742C52C0FF80D00B90D45 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671742C42C0FF80D00B90D45 /* AuthService.swift */; };
+		671742C22C0FF7A800B90D45 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671742C12C0FF7A800B90D45 /* User.swift */; };
+		671742C72C11260B00B90D45 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671742C62C11260B00B90D45 /* Device.swift */; };
+		672C57D32C11920D0006443A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672C57D22C11920D0006443A /* RootView.swift */; };
+		672C57DB2C1274A30006443A /* SwiftyRSA in Frameworks */ = {isa = PBXBuildFile; productRef = 672C57DA2C1274A30006443A /* SwiftyRSA */; };
+		672C57DE2C1280200006443A /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 672C57DD2C1280200006443A /* SimpleKeychain */; };
 		679FC10A2C0DA48B00C4A2AE /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1092C0DA48B00C4A2AE /* Color.swift */; };
 		679FC1102C0DA73F00C4A2AE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC10F2C0DA73F00C4A2AE /* HomeView.swift */; };
 		679FC1152C0F3A4200C4A2AE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1142C0F3A4200C4A2AE /* LoginView.swift */; };
-		679FC1182C0FBC9F00C4A2AE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1172C0FBC9F00C4A2AE /* LoginViewModel.swift */; };
+		679FC1182C0FBC9F00C4A2AE /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC1172C0FBC9F00C4A2AE /* AuthViewModel.swift */; };
 		679FC11B2C0FC0CE00C4A2AE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC11A2C0FC0CE00C4A2AE /* Constants.swift */; };
-		679FC11F2C0FC1F100C4A2AE /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */; };
+		67D4CB382C13E87C0052CD4F /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67D4CB372C13E87C0052CD4F /* UserService.swift */; };
+		67D4CB3A2C13E90B0052CD4F /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67D4CB392C13E90B0052CD4F /* APIClient.swift */; };
+		67D4CB3E2C14F87E0052CD4F /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67D4CB3D2C14F87E0052CD4F /* Error.swift */; };
+		67D4CB402C16C2690052CD4F /* DeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67D4CB3F2C16C2690052CD4F /* DeviceService.swift */; };
+		67DA63872C12AF6B0024098B /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DA63862C12AF6B0024098B /* EncryptionService.swift */; };
+		67DB49D52C12C60F00F4A381 /* SwiftyRSA in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 672C57DA2C1274A30006443A /* SwiftyRSA */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		67E51C452C083807000FBC55 /* pasteyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C442C083807000FBC55 /* pasteyApp.swift */; };
-		67E51C472C083807000FBC55 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E51C462C083807000FBC55 /* ContentView.swift */; };
 		67E51C492C083809000FBC55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67E51C482C083809000FBC55 /* Assets.xcassets */; };
 		67E51C4C2C083809000FBC55 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67E51C4B2C083809000FBC55 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		67DB49D62C12C60F00F4A381 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				67DB49D52C12C60F00F4A381 /* SwiftyRSA in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		671742C12C0FF7A800B90D45 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
-		671742C42C0FF80D00B90D45 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		671742C12C0FF7A800B90D45 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		671742C62C11260B00B90D45 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		672C57D22C11920D0006443A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		679FC1092C0DA48B00C4A2AE /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		679FC10F2C0DA73F00C4A2AE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		679FC1142C0F3A4200C4A2AE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		679FC1172C0FBC9F00C4A2AE /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		679FC1172C0FBC9F00C4A2AE /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		679FC11A2C0FC0CE00C4A2AE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
+		67D4CB372C13E87C0052CD4F /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		67D4CB392C13E90B0052CD4F /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		67D4CB3D2C14F87E0052CD4F /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		67D4CB3F2C16C2690052CD4F /* DeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceService.swift; sourceTree = "<group>"; };
+		67DA63862C12AF6B0024098B /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
 		67E51C412C083807000FBC55 /* pastey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pastey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		67E51C442C083807000FBC55 /* pasteyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pasteyApp.swift; sourceTree = "<group>"; };
-		67E51C462C083807000FBC55 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		67E51C482C083809000FBC55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		67E51C4B2C083809000FBC55 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -42,6 +67,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				672C57DE2C1280200006443A /* SimpleKeychain in Frameworks */,
+				672C57DB2C1274A30006443A /* SwiftyRSA in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +78,9 @@
 		671742C32C0FF80000B90D45 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				671742C42C0FF80D00B90D45 /* AuthService.swift */,
+				67DA63862C12AF6B0024098B /* EncryptionService.swift */,
+				67D4CB372C13E87C0052CD4F /* UserService.swift */,
+				67D4CB3F2C16C2690052CD4F /* DeviceService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -68,7 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				679FC1162C0F3A6600C4A2AE /* Components */,
-				679FC1112C0F372F00C4A2AE /* Login */,
+				679FC1112C0F372F00C4A2AE /* Auth */,
 				679FC10C2C0DA71500C4A2AE /* Home */,
 			);
 			path = Core;
@@ -98,13 +127,13 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		679FC1112C0F372F00C4A2AE /* Login */ = {
+		679FC1112C0F372F00C4A2AE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
 				679FC1132C0F3A3700C4A2AE /* ViewModels */,
 				679FC1122C0F3A2200C4A2AE /* Views */,
 			);
-			path = Login;
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		679FC1122C0F3A2200C4A2AE /* Views */ = {
@@ -118,7 +147,7 @@
 		679FC1132C0F3A3700C4A2AE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				679FC1172C0FBC9F00C4A2AE /* LoginViewModel.swift */,
+				679FC1172C0FBC9F00C4A2AE /* AuthViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -134,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				679FC11A2C0FC0CE00C4A2AE /* Constants.swift */,
+				67D4CB392C13E90B0052CD4F /* APIClient.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -141,8 +171,9 @@
 		679FC11D2C0FC1AC00C4A2AE /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				679FC11E2C0FC1F100C4A2AE /* LoginModel.swift */,
-				671742C12C0FF7A800B90D45 /* UserModel.swift */,
+				671742C12C0FF7A800B90D45 /* User.swift */,
+				671742C62C11260B00B90D45 /* Device.swift */,
+				67D4CB3D2C14F87E0052CD4F /* Error.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -166,14 +197,14 @@
 		67E51C432C083807000FBC55 /* pastey */ = {
 			isa = PBXGroup;
 			children = (
-				671742C32C0FF80000B90D45 /* Services */,
-				679FC11D2C0FC1AC00C4A2AE /* Models */,
-				679FC1192C0FC0C400C4A2AE /* Utils */,
-				679FC1082C0DA47600C4A2AE /* Extensions */,
-				679FC10B2C0DA70F00C4A2AE /* Core */,
-				67E51C442C083807000FBC55 /* pasteyApp.swift */,
-				67E51C462C083807000FBC55 /* ContentView.swift */,
 				67E51C482C083809000FBC55 /* Assets.xcassets */,
+				679FC1082C0DA47600C4A2AE /* Extensions */,
+				679FC11D2C0FC1AC00C4A2AE /* Models */,
+				679FC10B2C0DA70F00C4A2AE /* Core */,
+				671742C32C0FF80000B90D45 /* Services */,
+				679FC1192C0FC0C400C4A2AE /* Utils */,
+				672C57D22C11920D0006443A /* RootView.swift */,
+				67E51C442C083807000FBC55 /* pasteyApp.swift */,
 				67E51C4A2C083809000FBC55 /* Preview Content */,
 			);
 			path = pastey;
@@ -197,12 +228,17 @@
 				67E51C3D2C083807000FBC55 /* Sources */,
 				67E51C3E2C083807000FBC55 /* Frameworks */,
 				67E51C3F2C083807000FBC55 /* Resources */,
+				67DB49D62C12C60F00F4A381 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = pastey;
+			packageProductDependencies = (
+				672C57DA2C1274A30006443A /* SwiftyRSA */,
+				672C57DD2C1280200006443A /* SimpleKeychain */,
+			);
 			productName = pastey;
 			productReference = 67E51C412C083807000FBC55 /* pastey.app */;
 			productType = "com.apple.product-type.application";
@@ -231,6 +267,10 @@
 				Base,
 			);
 			mainGroup = 67E51C382C083807000FBC55;
+			packageReferences = (
+				672C57D92C1274A30006443A /* XCRemoteSwiftPackageReference "SwiftyRSA" */,
+				672C57DC2C1280200006443A /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
+			);
 			productRefGroup = 67E51C422C083807000FBC55 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -257,16 +297,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				67E51C472C083807000FBC55 /* ContentView.swift in Sources */,
 				679FC1102C0DA73F00C4A2AE /* HomeView.swift in Sources */,
-				679FC1182C0FBC9F00C4A2AE /* LoginViewModel.swift in Sources */,
+				67DA63872C12AF6B0024098B /* EncryptionService.swift in Sources */,
+				679FC1182C0FBC9F00C4A2AE /* AuthViewModel.swift in Sources */,
 				67E51C452C083807000FBC55 /* pasteyApp.swift in Sources */,
 				679FC11B2C0FC0CE00C4A2AE /* Constants.swift in Sources */,
-				679FC11F2C0FC1F100C4A2AE /* LoginModel.swift in Sources */,
+				67D4CB402C16C2690052CD4F /* DeviceService.swift in Sources */,
 				679FC1152C0F3A4200C4A2AE /* LoginView.swift in Sources */,
-				671742C52C0FF80D00B90D45 /* AuthService.swift in Sources */,
-				671742C22C0FF7A800B90D45 /* UserModel.swift in Sources */,
+				67D4CB3E2C14F87E0052CD4F /* Error.swift in Sources */,
+				67D4CB382C13E87C0052CD4F /* UserService.swift in Sources */,
+				671742C72C11260B00B90D45 /* Device.swift in Sources */,
+				671742C22C0FF7A800B90D45 /* User.swift in Sources */,
 				679FC10A2C0DA48B00C4A2AE /* Color.swift in Sources */,
+				672C57D32C11920D0006443A /* RootView.swift in Sources */,
+				67D4CB3A2C13E90B0052CD4F /* APIClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,9 +448,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = pastey;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -436,9 +482,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = pastey;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -478,6 +526,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		672C57D92C1274A30006443A /* XCRemoteSwiftPackageReference "SwiftyRSA" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TakeScoop/SwiftyRSA.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.0;
+			};
+		};
+		672C57DC2C1280200006443A /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/SimpleKeychain";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		672C57DA2C1274A30006443A /* SwiftyRSA */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 672C57D92C1274A30006443A /* XCRemoteSwiftPackageReference "SwiftyRSA" */;
+			productName = SwiftyRSA;
+		};
+		672C57DD2C1280200006443A /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 672C57DC2C1280200006443A /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 67E51C392C083807000FBC55 /* Project object */;
 }

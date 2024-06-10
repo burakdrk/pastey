@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @EnvironmentObject var auth: AuthViewModel
+    @State private var email = ""
+    @State private var password = ""
     
     var body: some View {
         VStack {
@@ -18,7 +20,7 @@ struct LoginView: View {
                 .padding(.bottom, 30)
             
             VStack(spacing: 20) {
-                TextField("Email", text: $viewModel.email)
+                TextField("Email", text: $email)
                     .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
@@ -26,41 +28,48 @@ struct LoginView: View {
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
                 
-                SecureField("Password", text: $viewModel.password)
+                SecureField("Password", text: $password)
                     .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
                 
                 Button() {
-                    viewModel.login()
+                    auth.login(email: email, password: password)
                 } label : {
                     Text("Log in")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.theme.accent)
+                        .background(!auth.isFetching ? Color.theme.accent : Color.gray)
                         .cornerRadius(10)
-                }
+                }.disabled(auth.isFetching)
                 
-                if let msg = viewModel.errorMessage {
+                if let msg = auth.errorMessage {
                     Text(msg)
                         .font(.footnote)
                         .foregroundColor(.red)
                         .padding()
                 }
             }.frame(maxWidth: 300)
-                        
-            VStack {
-                Text("Don't have an account?")
-                Button("Sign up") {
-                    print("Sign up")
-                }
-            }.frame(height: 100)
+            
+            SignupView
         }
+    }
+}
+
+extension LoginView {
+    private var SignupView: some View {
+        VStack {
+            Text("Don't have an account?")
+            Button("Sign up") {
+                auth.signUp(email: email, password: password)
+            }
+        }.frame(height: 100)
     }
 }
 
 #Preview {
     LoginView()
+        .environmentObject(AuthViewModel())
 }

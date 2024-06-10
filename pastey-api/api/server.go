@@ -65,6 +65,7 @@ func (server *Server) setupRouter(hub *ws.Hub) {
 	authRouter := router.Group(apiBasePath).Use(authMiddleware(server.tokenMaker))
 
 	authRouter.GET("/users/:id", server.getUser)
+	authRouter.GET("/users", server.getUserMe)
 	authRouter.POST("/devices", server.createDevice)
 	authRouter.GET("/devices", server.listUserDevices)
 	authRouter.DELETE("/devices/:id", server.deleteDevice)
