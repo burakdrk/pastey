@@ -51,3 +51,22 @@ struct LoginResponse: Codable {
         case user
     }
 }
+
+// MARK: - RefreshTokenRequest
+struct RefreshTokenRequest: Codable {
+    let refreshToken: String
+
+    enum CodingKeys: String, CodingKey {
+        case refreshToken = "refresh_token"
+    }
+}
+
+// MARK: - RefreshTokenResponse
+struct RefreshTokenResponse: Codable {
+    let accessToken, accessTokenExpiresAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case accessTokenExpiresAt = "access_token_expires_at"
+    }
+}

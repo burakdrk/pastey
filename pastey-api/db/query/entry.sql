@@ -4,10 +4,11 @@ VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 -- name: GetEntriesForDevice :many
-SELECT *
-FROM clipboard_entries
-WHERE to_device_id = $1
-ORDER BY created_at DESC;
+SELECT c.*, d.device_name as from_device_name
+FROM clipboard_entries c
+JOIN devices d ON c.from_device_id = d.id
+WHERE c.to_device_id = $1
+ORDER BY c.created_at DESC;
 
 -- name: GetEntryByEntryId :many
 SELECT *

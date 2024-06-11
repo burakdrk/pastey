@@ -33,18 +33,10 @@ struct LoginView: View {
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
                 
-                Button() {
+                BigButton(text: "Log in", action: {
                     auth.login(email: email, password: password)
-                } label : {
-                    Text("Log in")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(!auth.isFetching ? Color.theme.accent : Color.gray)
-                        .cornerRadius(10)
-                }.disabled(auth.isFetching)
-                
+                }, isFetching: auth.isFetching)
+                                
                 if let msg = auth.errorMessage {
                     Text(msg)
                         .font(.footnote)

@@ -11,6 +11,7 @@ import SimpleKeychain
 class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isFetching: Bool
+    @Published var isFetchingInitial: Bool
     @Published var user: User?
     @Published var isLoggedIn: Bool
     
@@ -24,17 +25,18 @@ class AuthViewModel: ObservableObject {
         self.userService = UserService()
         self.deviceService = DeviceService()
         self.keychain = SimpleKeychain()
-        self.dateFormatter = DateFormatter()
+        self.dateFormatter = DateFormatter.iso8601Full
         self.isFetching = false
-        self.user = nil
+        self.isFetchingInitial = true
+        self.user = UserDefaults.standard.getObject(forKey: "user", as: User.self)
         self.isLoggedIn = false
         
         do {
             _ = try self.keychain.string(forKey: "refresh_token")
             let refreshTokenExpiry = dateFormatter.date(from: try self.keychain.string(forKey: "refresh_token_expiry"))
-            
+                        
             if let refreshTokenExpiry {
-                if refreshTokenExpiry < Date() {
+                if refreshTokenExpiry > Date.now {
                     self.isLoggedIn = true
                 }
             }
@@ -44,8 +46,31 @@ class AuthViewModel: ObservableObject {
         
         let storedDeviceID = UserDefaults.standard.integer(forKey: "deviceID")
         self.deviceID = storedDeviceID == 0 ? nil : storedDeviceID
+        
+        if isLoggedIn && user == nil {
+            Task { @MainActor in
+                let (res, err) = await userService.fetchUser()
+                
+                errorMessage = err
+                
+                guard let res else {
+                    isFetchingInitial = false
+                    isLoggedIn = false
+                    return
+                }
+                
+                user = res
+                UserDefaults.standard.setObject(res, forKey: "user")
+                isFetchingInitial = false
+            }
+        } else {
+            self.isFetchingInitial = false
+        }
     }
-    
+}
+
+// MARK: - Login
+extension AuthViewModel {
     func login(email: String, password: String) {
         guard validateInput(email: email, password: password) else {
             return
@@ -77,6 +102,7 @@ class AuthViewModel: ObservableObject {
             }
         
             self.user = res.user
+            UserDefaults.standard.setObject(res.user, forKey: "user")
             
             if deviceID == nil {
                 let (devRes, devErr) = await deviceService.createDevice()
@@ -104,7 +130,10 @@ class AuthViewModel: ObservableObject {
             isLoggedIn = true
         }
     }
-    
+}
+
+// MARK: - Signup
+extension AuthViewModel {
     func signUp(email: String, password: String) {
         guard validateInput(email: email, password: password) else {
             return
@@ -115,7 +144,7 @@ class AuthViewModel: ObservableObject {
     }
 }
 
-// MARK: Helpers
+// MARK: - Helpers
 extension AuthViewModel {
     private func isValidEmail(_ email: String) -> Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"

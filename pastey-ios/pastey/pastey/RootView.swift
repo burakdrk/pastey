@@ -11,10 +11,14 @@ struct RootView: View {
     @EnvironmentObject var auth: AuthViewModel
     
     var body: some View {
-        if auth.isLoggedIn {
-            HomeView()
+        if auth.isFetchingInitial {
+            ProgressView()
         } else {
-            LoginView()
+            if auth.isLoggedIn {
+                RootTabView()
+            } else {
+                LoginView()
+            }
         }
     }
 }

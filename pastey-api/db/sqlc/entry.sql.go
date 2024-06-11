@@ -60,21 +60,33 @@ func (q *Queries) DeleteEntry(ctx context.Context, entryID uuid.UUID) error {
 }
 
 const getEntriesForDevice = `-- name: GetEntriesForDevice :many
-SELECT id, entry_id, user_id, from_device_id, to_device_id, encrypted_data, created_at
-FROM clipboard_entries
-WHERE to_device_id = $1
-ORDER BY created_at DESC
+SELECT c.id, c.entry_id, c.user_id, c.from_device_id, c.to_device_id, c.encrypted_data, c.created_at, d.device_name as from_device_name
+FROM clipboard_entries c
+JOIN devices d ON c.from_device_id = d.id
+WHERE c.to_device_id = $1
+ORDER BY c.created_at DESC
 `
 
-func (q *Queries) GetEntriesForDevice(ctx context.Context, toDeviceID int64) ([]ClipboardEntry, error) {
+type GetEntriesForDeviceRow struct {
+	ID             int64     `json:"id"`
+	EntryID        uuid.UUID `json:"entry_id"`
+	UserID         int64     `json:"user_id"`
+	FromDeviceID   int64     `json:"from_device_id"`
+	ToDeviceID     int64     `json:"to_device_id"`
+	EncryptedData  string    `json:"encrypted_data"`
+	CreatedAt      time.Time `json:"created_at"`
+	FromDeviceName string    `json:"from_device_name"`
+}
+
+func (q *Queries) GetEntriesForDevice(ctx context.Context, toDeviceID int64) ([]GetEntriesForDeviceRow, error) {
 	rows, err := q.db.QueryContext(ctx, getEntriesForDevice, toDeviceID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ClipboardEntry{}
+	items := []GetEntriesForDeviceRow{}
 	for rows.Next() {
-		var i ClipboardEntry
+		var i GetEntriesForDeviceRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.EntryID,
@@ -83,6 +95,7 @@ func (q *Queries) GetEntriesForDevice(ctx context.Context, toDeviceID int64) ([]
 			&i.ToDeviceID,
 			&i.EncryptedData,
 			&i.CreatedAt,
+			&i.FromDeviceName,
 		); err != nil {
 			return nil, err
 		}
