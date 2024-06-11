@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct pasteyApp: App {
     @StateObject var auth = AuthViewModel()
-    //@StateObject var settings = Settings()
+    //@StateObject var settings = SettingsViewModel()
 
     var body: some Scene {
         WindowGroup {

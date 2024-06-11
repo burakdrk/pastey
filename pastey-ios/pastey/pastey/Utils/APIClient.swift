@@ -15,14 +15,7 @@ class APIClient {
     private init() {}
 
     static func fetch<T: Decodable>(url: URL) async throws -> T {
-        let keychain = SimpleKeychain()
-        let accessToken: String?
-        
-        do {
-            accessToken = try keychain.string(forKey: "access_token")
-        } catch {
-            accessToken = nil
-        }
+        let accessToken = await getAccessToken()
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
@@ -46,14 +39,7 @@ class APIClient {
     }
 
     static func post<T: Decodable, U: Encodable>(url: URL, request: U, method: String = "POST") async throws -> T {
-        let keychain = SimpleKeychain()
-        let accessToken: String?
-        
-        do {
-            accessToken = try keychain.string(forKey: "access_token")
-        } catch {
-            accessToken = nil
-        }
+        let accessToken = await getAccessToken()
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method
@@ -75,5 +61,65 @@ class APIClient {
         }
         
         return try decoder.decode(T.self, from: data)
+    }
+    
+    private static func getAccessToken() async -> String? {
+        let keychain = SimpleKeychain()
+        let dateFormatter = DateFormatter.iso8601Full
+
+        var accessToken: String
+        let accessTokenExpiry: Date?
+
+        do {
+            accessToken = try keychain.string(forKey: "access_token")
+            accessTokenExpiry = dateFormatter.date(from: try keychain.string(forKey: "access_token_expiry"))
+        } catch {
+            return nil
+        }
+                
+        if let accessTokenExpiry {
+            if accessTokenExpiry > Date.now {
+                return accessToken
+            }
+        } else {
+            return nil
+        }
+        
+        // If the access token is expired, refresh it
+        let refreshToken: String
+
+        do {
+            refreshToken = try keychain.string(forKey: "refresh_token")
+        } catch {
+            return nil
+        }
+                
+        do {
+            let url = URL(string: "\(API_URL)/token/refresh")!
+            let request = RefreshTokenRequest(refreshToken: refreshToken)
+            var urlRequest = URLRequest(url: url)
+            urlRequest.httpMethod = "POST"
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpBody = try encoder.encode(request)
+            
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return nil
+            }
+            guard (200...299).contains(httpResponse.statusCode) else {
+                return nil
+            }
+            
+            let res = try decoder.decode(RefreshTokenResponse.self, from: data)
+
+            try keychain.set(res.accessToken, forKey: "access_token")
+            try keychain.set(res.accessTokenExpiresAt, forKey: "access_token_expiry")
+            accessToken = res.accessToken
+        } catch {
+            return nil
+        }
+        
+        return accessToken
     }
 }

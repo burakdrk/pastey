@@ -29,8 +29,8 @@ class UserService {
         }
     }
     
-    func fetchUser(userID: Int = 0) async -> (User?, String?) {
-        let url = URL(string: "\(API_URL)/users/\(userID != 0 ? String(userID) : "me")")!
+    func fetchUser() async -> (User?, String?) {
+        let url = URL(string: "\(API_URL)/users")!
         
         do {
             return (try await APIClient.fetch(url: url), nil)
