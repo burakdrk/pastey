@@ -36,4 +36,22 @@ class DeviceService {
             return (nil, "An unexpected error has occured. Please try again later.")
         }
     }
+    
+    func fetchDevices() async -> (ListDevicesResponse?, String?) {
+        let url = URL(string: "\(API_URL)/devices")!
+        
+        do {
+            return (try await APIClient.fetch(url: url), nil)
+        } catch APIError.serverError(message: let message, statusCode: let statusCode) {
+            switch statusCode {
+            case 401:
+                return (nil, "Unauthorized")
+            default:
+                return (nil, message)
+            }
+        } catch {
+            print("DEBUG: DeviceService::fetchDevices: \(error.localizedDescription)")
+            return (nil, "An unexpected error has occured. Please try again later.")
+        }
+    }
 }

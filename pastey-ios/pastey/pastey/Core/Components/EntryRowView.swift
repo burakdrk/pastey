@@ -9,52 +9,58 @@ import SwiftUI
 
 struct EntryRowView: View {
     @State private var isExpanded = false
-    @State private var rotationAngle: Double = 0
-
+    
     let entry: Entry
     
-    var body: some View {
+    var decryptedData: String {
+        let decrypt = try? EncryptionService.shared.decryptMessage(encryptedMessage: entry.encryptedData)
         
-        VStack {
+        return decrypt ?? "Decryption failed"
+    }
+    
+    var body: some View {
+        DisclosureGroup(isExpanded: $isExpanded) {
+            VStack {
+                Text(decryptedData)
+                    .padding(.bottom, 20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .onTapGesture {
+                        ClipboardService.shared.copyToClipboard(data: decryptedData)
+                    }
+                
+                HStack {
+                    if let date = DateFormatter.iso8601Full.date(from: entry.createdAt) {
+                        HStack {
+                            Text(date, style: .time)
+                            Text("•")
+                            Text(date, style: .date)
+                        }
+                    }
+                    Spacer()
+                    Text(entry.fromDeviceName)
+                }
+                .font(.caption)
+                .foregroundColor(Color.theme.secondaryText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .listRowSeparator(.hidden, edges: .top)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 20))
+            .deleteDisabled(true)
+        } label : {
             HStack {
-                Text(isExpanded ? "From \(entry.fromDeviceName)" : entry.encryptedData)
+                Text(isExpanded ? "Entry" : decryptedData)
                     .lineLimit(1)
                     .padding(.trailing, 15)
                     .bold(isExpanded ? true : false)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Spacer()
-                
-                VStack {
-                    Image(systemName: "chevron.right")
-                        .font(.title2)
-                        .rotationEffect(Angle(degrees: rotationAngle))
-                        .bold()
-                }
-                .foregroundColor(Color.theme.accent)
             }
-            .padding(.vertical, 15)
-            .padding(.horizontal, 5)
-            .onTapGesture {
-                isExpanded.toggle()
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    rotationAngle += 90
-                }
-                rotationAngle = isExpanded ? 90 : 0
-            }
-            
-            if isExpanded {
-                Text(entry.encryptedData)
-                
-                Button("Copy") {
-                    print("copy")
-                }.foregroundColor(Color.theme.accent)
-                    .frame(alignment: .leading)
-                    
-            }
-            
-            
+            .padding(.vertical, 13)
+            .padding(.horizontal, 4)
         }
-        
+        .alignmentGuide(.listRowSeparatorTrailing) { d in
+            d[.trailing]
+        }
     }
 }
 

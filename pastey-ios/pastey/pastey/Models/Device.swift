@@ -21,6 +21,8 @@ struct Device: Codable, Identifiable {
     }
 }
 
+typealias ListDevicesResponse = [Device]
+
 // MARK: - CreateDeviceRequest
 struct CreateDeviceRequest: Codable {
     let deviceName, publicKey: String

@@ -8,46 +8,32 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var auth: AuthViewModel
-    
-    var body: some View {
+    @StateObject private var viewModel = HomeViewModel()
         
+    var body: some View {
         NavigationStack {
             VStack {
-                HStack {
-                    Text("pastey")
-                        .font(.title)
-                        .bold()
-                    Spacer()
-                    
-                    Button(action: {
-                        print("edit list")
-                    }, label: {
-                        Image(systemName: "square.and.pencil")
-                            .font(.title2)
-                    })
+                HeaderView
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
                 
-
-                List {
-                    ForEach(0..<8) { _ in
-                        EntryRowView(entry: DeveloperPreview.instance.entry)
+                List() {
+                    ForEach(viewModel.entries) { entry in
+                        EntryRowView(entry: entry)
                     }
-                }.listStyle(PlainListStyle())
+                    .onDelete(perform: viewModel.deleteEntry)
+                }
+                .listStyle(.plain)
+                .environment(\.editMode, $viewModel.editMode)
+                .refreshable {
+                    await viewModel.fetchEntries()
+                }
                 
-                HStack {
-                    BigButton(text: "Copy", action: {
-                        print("test")
-                    })
-                    
-                    BigButton(text: "Paste", action: {
-                        print("test")
-                    })
-                }.padding()
-                
-                
+                BottomButtonsView
             }
             .navigationBarHidden(true)
         }
@@ -56,5 +42,45 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .environmentObject(AuthViewModel())
+}
+
+// MARK: - Header
+extension HomeView {
+    private var HeaderView: some View {
+        HStack {
+            Text("pastey")
+                .font(.title)
+                .bold()
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation(.spring()) {
+                    viewModel.editMode = viewModel.editMode.isEditing ? .inactive : .active
+                }
+            }, label: {
+                Text(viewModel.editMode.isEditing ? "Done" : "Edit")
+            })
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+    }
+}
+
+// MARK: - Bottom Buttons
+extension HomeView {
+    private var BottomButtonsView: some View {
+        HStack {
+            BigButton(text: "Copy", action: {
+                viewModel.copy()
+            }, isFetching: viewModel.isFetching)
+            
+            BigButton(text: "Paste", action: {
+                viewModel.paste()
+            }, isFetching: viewModel.isFetching)
+        }
+        .padding()
+        .padding(.top, -2)
+        .background(Color.theme.background)
+    }
 }
