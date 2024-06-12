@@ -63,6 +63,51 @@ class APIClient {
         return try decoder.decode(T.self, from: data)
     }
     
+    static func postWithoutResponse<T: Encodable>(url: URL, request: T, method: String = "POST") async throws {
+        let accessToken = await getAccessToken()
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = method
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let accessToken {
+            urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        urlRequest.httpBody = try encoder.encode(request)
+        
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.unknownError
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let ErrorResponse = try decoder.decode(ErrorResponse.self, from: data)
+            throw APIError.serverError(message: ErrorResponse.error, statusCode: httpResponse.statusCode)
+        }
+    }
+    
+    static func delete(url: URL) async throws {
+        let accessToken = await getAccessToken()
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "DELETE"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let accessToken {
+            urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.unknownError
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let ErrorResponse = try decoder.decode(ErrorResponse.self, from: data)
+            throw APIError.serverError(message: ErrorResponse.error, statusCode: httpResponse.statusCode)
+        }
+    }
+    
     private static func getAccessToken() async -> String? {
         let keychain = SimpleKeychain()
         let dateFormatter = DateFormatter.iso8601Full

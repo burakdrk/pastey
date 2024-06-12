@@ -18,7 +18,28 @@ class DeveloperPreview {
         fromDeviceID: 3,
         toDeviceID: 3,
         encryptedData: "encryptedDataencryptedDataencryptedDataencryptedDataencryptedDataencryptedData",
-        createdAt: "createdAt",
+        createdAt: "2024-06-11T06:24:41.805469Z",
         fromDeviceName: "Windows"
     )
+    
+    func createEntryArray() -> [Entry] {
+        var entries = [Entry]()
+        
+        for i in 1...10 {
+            let temp = Entry(
+                id: i,
+                entryID: UUID().uuidString,
+                userID: 3,
+                fromDeviceID: 3,
+                toDeviceID: 3,
+                encryptedData: "\(i)encryptedData",
+                createdAt: "2024-06-11T06:24:41.805469Z",
+                fromDeviceName: "Windows"
+            )
+            
+            entries.append(temp)
+        }
+        
+        return entries
+    }
 }

@@ -6,3 +6,18 @@
 //
 
 import Foundation
+import UIKit
+
+class ClipboardService {
+    static let shared = ClipboardService()
+    
+    private init() {}
+    
+    func copyToClipboard(data: String) {
+        UIPasteboard.general.string = data
+    }
+    
+    func pasteFromClipboard() -> String? {
+        return UIPasteboard.general.string
+    }
+}

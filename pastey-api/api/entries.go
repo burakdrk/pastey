@@ -10,7 +10,7 @@ import (
 )
 
 type deleteEntryRequest struct {
-	ID uuid.UUID `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) deleteEntry(ctx *gin.Context) {
@@ -21,9 +21,15 @@ func (server *Server) deleteEntry(ctx *gin.Context) {
 		return
 	}
 
+	uuid, err := uuid.Parse(req.ID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	entry, err := server.store.GetEntryByEntryId(ctx, req.ID)
+	entry, err := server.store.GetEntryByEntryId(ctx, uuid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -35,7 +41,7 @@ func (server *Server) deleteEntry(ctx *gin.Context) {
 		return
 	}
 
-	err = server.store.DeleteEntry(ctx, req.ID)
+	err = server.store.DeleteEntry(ctx, uuid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
