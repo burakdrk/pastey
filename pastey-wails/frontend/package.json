@@ -39,7 +39,8 @@
             {
                 "files": [
                     "*.json",
-                    "*.scss"
+                    "*.scss",
+                    "*.css"
                 ],
                 "options": {
                     "tabWidth": 2
