@@ -3,6 +3,8 @@ name: Run unit tests
 on:
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'pastey-api/**'
 
 jobs:
 

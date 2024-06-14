@@ -27,7 +27,7 @@ struct RootTabView: View {
                 }
                 .tag(2)
             
-            SettingsView()
+            SettingsView(selectedTab: $selectedIndex)
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")

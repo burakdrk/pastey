@@ -22,6 +22,8 @@ class DeveloperPreview {
         fromDeviceName: "Windows"
     )
     
+    let user = User(id: 1, email: "test@tset.tset", ispremium: true, isemailverified: true, createdAt: "2024-06-11T06:24:41.805469Z")
+    
     func createEntryArray() -> [Entry] {
         var entries = [Entry]()
         
@@ -41,5 +43,23 @@ class DeveloperPreview {
         }
         
         return entries
+    }
+    
+    func createDeviceArray() -> [Device] {
+        var devices = [Device]()
+        
+        for i in 1...5 {
+            let temp = Device(
+                id: i,
+                userID: 3,
+                deviceName: "Windows",
+                publicKey: "publicKey",
+                createdAt: "2024-06-11T06:24:41.805469Z"
+            )
+            
+            devices.append(temp)
+        }
+        
+        return devices
     }
 }

@@ -54,4 +54,23 @@ class DeviceService {
             return (nil, "An unexpected error has occured. Please try again later.")
         }
     }
+    
+    func deleteDevice(deviceID: Int) async -> String? {
+        let url = URL(string: "\(API_URL)/devices/\(deviceID)")!
+        
+        do {
+            try await APIClient.delete(url: url)
+            return nil
+        } catch APIError.serverError(message: let message, statusCode: let statusCode) {
+            switch statusCode {
+            case 401:
+                return "Unauthorized"
+            default:
+                return message
+            }
+        } catch {
+            print("DEBUG: DeviceService::deleteDevice: \(error.localizedDescription)")
+            return "An unexpected error has occured. Please try again later."
+        }
+    }
 }
