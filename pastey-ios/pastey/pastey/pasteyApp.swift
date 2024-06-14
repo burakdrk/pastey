@@ -10,12 +10,12 @@ import SwiftUI
 @main
 struct pasteyApp: App {
     @StateObject var auth = AuthViewModel()
-    //@StateObject var settings = SettingsViewModel()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(auth)
+                .tint(.theme.accent)
         }
     }
 }

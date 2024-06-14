@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AlertKit
 
 struct EntryRowView: View {
     @State private var isExpanded = false
@@ -26,6 +27,12 @@ struct EntryRowView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .onTapGesture {
                         ClipboardService.shared.copyToClipboard(data: decryptedData)
+                        AlertKitAPI.present(
+                            title: "Copied to clipboard",
+                            icon: .done,
+                            style: .iOS16AppleMusic,
+                            haptic: .success
+                        )
                     }
                 
                 HStack {
@@ -56,7 +63,6 @@ struct EntryRowView: View {
                 
             }
             .padding(.vertical, 13)
-            .padding(.horizontal, 4)
         }
         .alignmentGuide(.listRowSeparatorTrailing) { d in
             d[.trailing]

@@ -19,7 +19,7 @@ struct BigButton: View {
                 .foregroundColor(.white)
                 .padding()
                 .frame(maxWidth: .infinity)
-                .background(!isFetching ? Color.theme.accent : Color.theme.accent.opacity(0.5))
+                .background(Color.theme.accent)
                 .cornerRadius(10)
         }
         .disabled(isFetching)

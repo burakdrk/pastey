@@ -139,8 +139,36 @@ extension AuthViewModel {
             return
         }
         
-        print("signup")
-        errorMessage = nil
+        isFetching = true
+        
+        Task { @MainActor in
+            let (user, err) = await userService.createUser(email: email, password: password)
+            
+            errorMessage = err
+            guard user != nil else {
+                isFetching = false
+                return
+            }
+            
+            self.clearUserData()
+            self.login(email: email, password: password)
+        }
+    }
+}
+
+// MARK: - Logout
+extension AuthViewModel {
+    func logout() {
+        let refTok = try? self.keychain.string(forKey: "refresh_token")
+        
+        isFetching = true
+        
+        Task { @MainActor in
+            _ = await userService.logout(refreshToken: refTok ?? "")
+            
+            self.clearUserData(deleteDevice: true)
+            isFetching = false
+        }
     }
 }
 
@@ -170,5 +198,20 @@ extension AuthViewModel {
         }
         
         return true
+    }
+    
+    private func clearUserData(deleteDevice: Bool = false) {
+        UserDefaults.standard.removeObject(forKey: "user")
+        if deleteDevice {
+            UserDefaults.standard.removeObject(forKey: "deviceID")
+        }
+        
+        try? keychain.deleteItem(forKey: "access_token")
+        try? keychain.deleteItem(forKey: "access_token_expiry")
+        try? keychain.deleteItem(forKey: "refresh_token")
+        try? keychain.deleteItem(forKey: "refresh_token_expiry")
+        
+        self.user = nil
+        self.isLoggedIn = false
     }
 }

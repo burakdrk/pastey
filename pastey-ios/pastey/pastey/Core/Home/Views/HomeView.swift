@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AlertKit
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
@@ -15,22 +16,25 @@ struct HomeView: View {
             VStack {
                 HeaderView
                 
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .padding()
-                }
-                
-                List() {
-                    ForEach(viewModel.entries) { entry in
-                        EntryRowView(entry: entry)
+                ZStack {
+                    List() {
+                        ForEach(viewModel.entries) { entry in
+                            EntryRowView(entry: entry)
+                        }
+                        .onDelete(perform: viewModel.deleteEntry)
                     }
-                    .onDelete(perform: viewModel.deleteEntry)
-                }
-                .listStyle(.plain)
-                .environment(\.editMode, $viewModel.editMode)
-                .refreshable {
-                    await viewModel.fetchEntries()
+                    .listStyle(.plain)
+                    .environment(\.editMode, $viewModel.editMode)
+                    .refreshable {
+                        await viewModel.fetchEntries()
+                    }
+                    
+                    if viewModel.entries.isEmpty {
+                        Text("No entries found")
+                            .foregroundColor(Color.theme.secondaryText)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
                 }
                 
                 BottomButtonsView
