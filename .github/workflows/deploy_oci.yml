@@ -3,6 +3,8 @@ name: Deploy to OCI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'pastey-api/**'
 
 jobs:
 
