@@ -31,12 +31,8 @@ func main() {
 			app,
 		},
 		Windows: &windows.Options{
-			WebviewIsTransparent:              true,
-			WindowIsTranslucent:               true,
-			DisableFramelessWindowDecorations: true,
-			IsZoomControlEnabled:              false,
-			DisableWindowIcon:                 true,
-			DisablePinchZoom:                  true,
+			IsZoomControlEnabled: false,
+			DisablePinchZoom:     true,
 		},
 	})
 
