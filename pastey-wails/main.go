@@ -21,6 +21,8 @@ func main() {
 		Title:                    "pastey",
 		Width:                    1024,
 		Height:                   768,
+		MinWidth:                 800,
+		MinHeight:                600,
 		EnableDefaultContextMenu: false,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
