@@ -1,6 +1,7 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Bot, LifeBuoy, Settings, SquareTerminal } from "lucide-react";
+import { Home, CircleUserRound, ClipboardList, LifeBuoy, Settings } from "lucide-react";
+import { BrowserOpenURL } from "../../wailsjs/runtime";
 
 function Sidebar() {
   return (
@@ -9,22 +10,32 @@ function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-lg bg-muted" aria-label="Playground">
-                <SquareTerminal className="size-5" />
+              <Button variant="ghost" size="icon" className="rounded-lg bg-muted" aria-label="Home">
+                <Home className="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={5}>
-              Playground
+              Home
             </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-lg" aria-label="Models">
-                <Bot className="size-5" />
+              <Button variant="ghost" size="icon" className="rounded-lg" aria-label="Clipboard">
+                <ClipboardList className="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={5}>
-              Models
+              Clipboard
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-lg" aria-label="Account">
+                <CircleUserRound className="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={5}>
+              Account
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -33,7 +44,13 @@ function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="mt-auto rounded-lg" aria-label="Help">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="mt-auto rounded-lg"
+                aria-label="Help"
+                onClick={() => BrowserOpenURL("https://github.com/burakdrk/pastey/issues")}
+              >
                 <LifeBuoy className="size-5" />
               </Button>
             </TooltipTrigger>

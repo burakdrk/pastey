@@ -12,7 +12,6 @@ import Sidebar from "@/components/sidebar";
 function Home() {
   return (
     <>
-      <Header />
       <div className="flex h-full w-full overflow-y-auto">
         <Sidebar />
 

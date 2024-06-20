@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { WindowSetDarkTheme, WindowSetLightTheme, WindowSetSystemDefaultTheme } from "../../wailsjs/runtime";
 
 type Theme = "dark" | "light" | "system";
 
@@ -48,6 +49,17 @@ export function ThemeProvider({
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme);
       setTheme(theme);
+      switch (theme) {
+        case "dark":
+          WindowSetDarkTheme();
+          break;
+        case "light":
+          WindowSetLightTheme();
+          break;
+        default:
+          WindowSetSystemDefaultTheme();
+          break;
+      }
     },
   };
 

@@ -4,12 +4,14 @@ import { globalState } from "./lib/store";
 import { useAtom } from "jotai";
 import Home from "./pages/Home";
 import Authentication from "./pages/Authentication";
+import Header from "./components/header";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(globalState.isLoggedIn);
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
+      <Header />
       <Router>
         <Routes>
           <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />

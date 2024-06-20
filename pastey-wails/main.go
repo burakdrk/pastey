@@ -25,10 +25,11 @@ func main() {
 		MinWidth:                 800,
 		MinHeight:                600,
 		EnableDefaultContextMenu: false,
+		Frameless:                true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 1},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
@@ -43,8 +44,8 @@ func main() {
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  false,
 			About: &mac.AboutInfo{
-				Title:   "My Application",
-				Message: "© 2021 Me",
+				Title:   "pastey app",
+				Message: "© 2024 Burak Duruk",
 			},
 		},
 	})
