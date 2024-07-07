@@ -5,6 +5,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { API_URL } from "@/lib/constants";
+import { Login } from "../../../wailsjs/go/backend/App";
 import axios from "axios";
 
 const formSchema = z.object({
@@ -22,7 +23,8 @@ function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const res = await axios.post(API_URL + "/users/login", values);
+    //const res = await axios.post(API_URL + "/users/login", values);
+    let res = await Login(values.email, values.password);
 
     console.log(res);
   }

@@ -5,3 +5,7 @@
 export function Greet(arg1) {
   return window['go']['backend']['App']['Greet'](arg1);
 }
+
+export function Login(arg1, arg2) {
+  return window['go']['backend']['App']['Login'](arg1, arg2);
+}
