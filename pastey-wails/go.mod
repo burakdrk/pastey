@@ -1,4 +1,4 @@
-module pastey-wails
+module github.com/burakdrk/pastey/pastey-wails
 
 go 1.21
 

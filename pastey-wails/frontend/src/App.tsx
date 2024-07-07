@@ -1,5 +1,5 @@
 import { ThemeProvider } from "./components/theme-provider";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { globalState } from "./lib/store";
 import { useAtom } from "jotai";
 import Home from "./pages/Home";
