@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"runtime"
 
 	"github.com/burakdrk/pastey/pastey-wails/backend"
 
@@ -19,6 +20,11 @@ func main() {
 	// Create an instance of the app structure
 	app := backend.NewApp()
 
+	isFrameless := true
+	if runtime.GOOS == "darwin" {
+		isFrameless = false
+	}
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:                    "pastey",
@@ -27,7 +33,7 @@ func main() {
 		MinWidth:                 800,
 		MinHeight:                600,
 		EnableDefaultContextMenu: false,
-		Frameless:                true,
+		Frameless:                isFrameless,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -54,6 +60,6 @@ func main() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		app.Logger.Log("Error: " + err.Error())
 	}
 }

@@ -6,6 +6,7 @@ toolchain go1.22.1
 
 require (
 	github.com/go-resty/resty/v2 v2.13.1
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/wailsapp/wails/v2 v2.8.2
 )
 

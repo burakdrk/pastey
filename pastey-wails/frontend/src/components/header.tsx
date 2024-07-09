@@ -16,7 +16,7 @@ function Header() {
       onDoubleClick={() => WindowToggleMaximise()}
     >
       <h1 className="text-xl font-semibold flex-1">Pastey</h1>
-      <Badge variant="outline" className="bg-green-700">
+      <Badge variant="outline" className="bg-green-700 mr-3">
         Connected
       </Badge>
       {window.navigator.userAgent.includes("Windows") && (

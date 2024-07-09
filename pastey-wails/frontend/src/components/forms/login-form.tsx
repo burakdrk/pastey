@@ -1,19 +1,21 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { API_URL } from "@/lib/constants";
 import { Login } from "../../../wailsjs/go/backend/App";
-import axios from "axios";
+import { useAtom } from "jotai";
+import { globalState } from "@/lib/store";
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 function LoginForm() {
+  const [, setIsLoggedIn] = useAtom(globalState.isLoggedIn);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -23,10 +25,17 @@ function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    //const res = await axios.post(API_URL + "/users/login", values);
-    let res = await Login(values.email, values.password);
+    let err = await Login(values.email, values.password);
 
-    console.log(res);
+    if (err.error) {
+      form.setError("email", {
+        type: "manual",
+        message: err.error,
+      });
+      return;
+    }
+
+    setIsLoggedIn(true);
   }
 
   return (
@@ -60,7 +69,7 @@ function LoginForm() {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
           Login
         </Button>
       </form>
