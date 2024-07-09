@@ -91,6 +91,7 @@ func (a *App) Startup(ctx context.Context) {
 	}
 
 	a.deviceId = deviceId
+	fmt.Println(a)
 }
 
 func (a *App) Shutdown(ctx context.Context) {
@@ -180,7 +181,9 @@ func (a *App) Login(email string, password string) models.Error {
 		a.storage.Save("device_id", fmt.Sprint(deviceResp.Device.ID))
 		a.storage.Save("refresh_token", deviceResp.RefreshToken)
 		a.storage.Save("refresh_token_expiry", deviceResp.RefreshTokenExpiresAt.String())
+		a.deviceId = deviceResp.Device.ID
 	}
 
+	a.isLoggedIn = true
 	return models.Error{}
 }

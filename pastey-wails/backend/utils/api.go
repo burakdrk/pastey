@@ -12,7 +12,7 @@ import (
 func AccessTokenMiddleware(c *resty.Client, req *resty.Request, storage storage.Storage) error {
 	token, err := storage.Get("access_token")
 	if err != nil {
-		return err
+		return nil
 	}
 
 	expiry, err := storage.Get("access_token_expiry")
