@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 )
 
@@ -38,7 +39,8 @@ func GenerateKeyPair(keySize int) (string, string, error) {
 
 func EncryptData(data string, publicKeyPEM string) (string, error) {
 	// Decode public key
-	pub, err := x509.ParsePKCS1PublicKey([]byte(publicKeyPEM))
+	pemBlock, _ := pem.Decode([]byte(publicKeyPEM))
+	pub, err := x509.ParsePKCS1PublicKey(pemBlock.Bytes)
 	if err != nil {
 		return "", err
 	}
@@ -49,18 +51,25 @@ func EncryptData(data string, publicKeyPEM string) (string, error) {
 		return "", err
 	}
 
-	return string(encryptedData), nil
+	encryptedBase64 := base64.StdEncoding.EncodeToString(encryptedData)
+
+	return encryptedBase64, nil
 }
 
 func DecryptData(data string, privateKeyPEM string) (string, error) {
 	// Decode private key
-	priv, err := x509.ParsePKCS1PrivateKey([]byte(privateKeyPEM))
+	pemBlock, _ := pem.Decode([]byte(privateKeyPEM))
+	priv, err := x509.ParsePKCS1PrivateKey(pemBlock.Bytes)
 	if err != nil {
 		return "", err
 	}
 
-	// Decrypt data
-	decryptedData, err := rsa.DecryptPKCS1v15(rand.Reader, priv, []byte(data))
+	ciphertext, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return "", err
+	}
+
+	decryptedData, err := rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)
 	if err != nil {
 		return "", err
 	}

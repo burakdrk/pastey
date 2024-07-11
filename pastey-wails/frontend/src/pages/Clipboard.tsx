@@ -1,47 +1,111 @@
-import {
-  Table,
-  TableCaption,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableFooter,
-} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import { DeleteEntry, GetEntries } from "../../wailsjs/go/backend/App";
+import { models } from "wailsjs/go/models";
+import { formatDateToLocalTime } from "@/lib/utils";
+import { EventsOn, EventsOff } from "../../wailsjs/runtime/runtime";
+import { RefreshCcw } from "lucide-react";
 
 function Clipboard() {
+  async function getEntries() {
+    setLoading(true);
+    const res = await GetEntries();
+
+    if (res.error.error) {
+      console.error(res.error.error);
+      return;
+    }
+
+    setEntries(res.entries);
+    setLoading(false);
+  }
+
+  async function deleteEntry(id: string) {
+    setLoading(true);
+    const res = await DeleteEntry(id);
+
+    if (res.error) {
+      console.error(res.error);
+      return;
+    }
+
+    setEntries(entries.filter((entry) => entry.entry_id !== id));
+    setLoading(false);
+  }
+
+  async function deleteAllEntries() {
+    setLoading(true);
+
+    for (const entry of entries) {
+      const res = await DeleteEntry(entry.entry_id);
+
+      if (res.error) {
+        console.error(res.error);
+        return;
+      }
+    }
+
+    setEntries([]);
+    setLoading(false);
+  }
+
+  const [entries, setEntries] = useState<models.Entry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getEntries();
+
+    EventsOn("ws:entry", (data: any) => {
+      console.log(data);
+    });
+
+    return () => {
+      EventsOff("ws:entry");
+    };
+  }, []);
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Clipboard</h1>
+        <h1 className="text-lg font-semibold md:text-2xl flex-1">Clipboard</h1>
+        <Button onClick={() => getEntries()} disabled={loading} variant={"outline"}>
+          <RefreshCcw size={20} />
+        </Button>
+        <Button className="ml-4" variant={"destructive"} onClick={() => deleteAllEntries()} disabled={loading}>
+          Delete All
+        </Button>
       </div>
 
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="w-[200px]">From</TableHead>
+            <TableHead>Content</TableHead>
+            <TableHead className="w-[100px]"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-          </TableRow>
-        ))} */}
+          {entries.map((entry, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <div className="font-medium">{entry.from_device_name}</div>
+                <div className="hidden text-sm text-muted-foreground md:inline">
+                  {formatDateToLocalTime(entry.created_at)}
+                </div>
+              </TableCell>
+              <TableCell className="break-all">{entry.encrypted_data}</TableCell>
+              <TableCell className="flex gap-2 justify-end flex-col">
+                <Button variant={"outline"} onClick={() => navigator.clipboard.writeText(entry.encrypted_data)}>
+                  Copy
+                </Button>
+                <Button variant={"destructive"} onClick={() => deleteEntry(entry.entry_id)} disabled={loading}>
+                  Delete
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter>
       </Table>
     </main>
   );

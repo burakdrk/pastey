@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/burakdrk/pastey/pastey-wails/backend/clipboard"
 	"github.com/burakdrk/pastey/pastey-wails/backend/crypto"
 	"github.com/burakdrk/pastey/pastey-wails/backend/models"
 	"github.com/burakdrk/pastey/pastey-wails/backend/storage"
@@ -21,6 +22,8 @@ type App struct {
 	api        *resty.Client
 	Logger     *storage.Logger
 	storage    storage.Storage
+	clipboard  *clipboard.Clipboard
+	ws         *clipboard.WSClient
 	isLoggedIn bool
 	deviceId   int64
 }
@@ -45,8 +48,18 @@ func NewApp() *App {
 
 	logger := storage.NewLogger(appConfigPath)
 	storage := storage.NewSQLiteStorage(appConfigPath)
+	ws := clipboard.NewWSClient()
+	clipboard, err := clipboard.NewClipboard()
+	if err != nil {
+		logger.Log(err.Error())
+		panic(err)
+	}
 
 	client.OnBeforeRequest(func(c *resty.Client, req *resty.Request) error {
+		if req.URL == "/token/refresh" {
+			return nil
+		}
+
 		return utils.AccessTokenMiddleware(c, req, storage)
 	})
 
@@ -54,6 +67,8 @@ func NewApp() *App {
 		api:        client,
 		Logger:     logger,
 		storage:    storage,
+		clipboard:  clipboard,
+		ws:         ws,
 		isLoggedIn: false,
 		deviceId:   0,
 	}
@@ -63,6 +78,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
+	a.clipboard.Start(ctx, a.copyClipboard)
 
 	expiry, err := a.storage.Get("refresh_token_expiry")
 	if err != nil {
@@ -91,16 +107,148 @@ func (a *App) Startup(ctx context.Context) {
 	}
 
 	a.deviceId = deviceId
-	fmt.Println(a)
+
+	token, err := a.storage.Get("access_token")
+	if err != nil {
+		return
+	}
+
+	err = a.ws.Connect(ctx, fmt.Sprintf("wss://api.burakduruk.com/v1/ws?device_id=%d", deviceId), token)
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return
+	}
+
+	privateKey, err := a.storage.Get("private_key")
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return
+	}
+
+	go a.ws.Listen(a.clipboard, privateKey)
 }
 
 func (a *App) Shutdown(ctx context.Context) {
-	a.ctx.Done()
 	a.storage.Close()
+	a.ws.Close()
 }
 
 func (a *App) GetIsLoggedIn() bool {
 	return a.isLoggedIn
+}
+
+func (a *App) GetConnectionStatus() bool {
+	return a.ws.GetIsConnected()
+}
+
+type GetEntriesResponse struct {
+	Entries []models.Entry `json:"entries"`
+	Error   models.Error   `json:"error"`
+}
+
+func (a *App) GetEntries() GetEntriesResponse {
+	var entries []models.Entry
+	var errResp models.Error
+
+	deviceId, err := a.storage.Get("device_id")
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return GetEntriesResponse{entries, models.GetDefaultError()}
+	}
+
+	res, err := a.api.R().
+		SetError(&errResp).
+		SetResult(&entries).
+		Get(fmt.Sprintf("/devices/%s/entries", deviceId))
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return GetEntriesResponse{entries, models.GetDefaultError()}
+	}
+
+	if res.IsError() {
+		return GetEntriesResponse{entries, errResp}
+	}
+
+	privateKey, err := a.storage.Get("private_key")
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return GetEntriesResponse{entries, models.GetDefaultError()}
+	}
+
+	for i := range entries {
+		decrypted, err := crypto.DecryptData(entries[i].EncryptedData, privateKey)
+		if err != nil {
+			a.Logger.Log(err.Error())
+			return GetEntriesResponse{entries, models.GetDefaultError()}
+		}
+
+		entries[i].EncryptedData = decrypted
+	}
+
+	return GetEntriesResponse{entries, models.Error{}}
+}
+
+func (a *App) GetDevices() ([]models.Device, models.Error) {
+	var devices []models.Device
+	var errResp models.Error
+
+	res, err := a.api.R().
+		SetError(&errResp).
+		SetResult(&devices).
+		Get("/devices")
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return devices, models.GetDefaultError()
+	}
+
+	if res.IsError() {
+		return devices, errResp
+	}
+
+	return devices, models.Error{}
+}
+
+func (a *App) copyClipboard(data string) models.Error {
+	var errResp models.Error
+
+	devices, deviceErr := a.GetDevices()
+	if deviceErr.Message != "" {
+		return deviceErr
+	}
+
+	copies := []models.Copy{}
+	for _, device := range devices {
+		encrypted, err := crypto.EncryptData(data, device.PublicKey)
+		if err != nil {
+			a.Logger.Log(err.Error())
+			return models.GetDefaultError()
+		}
+
+		copies = append(copies, models.Copy{
+			ToDeviceID:    device.ID,
+			EncryptedData: encrypted,
+		})
+	}
+
+	req := models.CopyRequest{
+		FromDeviceID: a.deviceId,
+		Copies:       copies,
+	}
+
+	res, err := a.api.R().
+		SetBody(req).
+		SetError(&errResp).
+		Post("/copy")
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return models.GetDefaultError()
+	}
+
+	if res.IsError() {
+		return errResp
+	}
+
+	return models.Error{}
 }
 
 func (a *App) Login(email string, password string) models.Error {
@@ -185,5 +333,23 @@ func (a *App) Login(email string, password string) models.Error {
 	}
 
 	a.isLoggedIn = true
+	return models.Error{}
+}
+
+func (a *App) DeleteEntry(entryId string) models.Error {
+	var errResp models.Error
+
+	res, err := a.api.R().
+		SetError(&errResp).
+		Delete(fmt.Sprintf("/entries/%s", entryId))
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return models.GetDefaultError()
+	}
+
+	if res.IsError() {
+		return errResp
+	}
+
 	return models.Error{}
 }

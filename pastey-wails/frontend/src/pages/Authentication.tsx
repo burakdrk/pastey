@@ -1,8 +1,5 @@
 import LoginForm from "@/components/forms/login-form";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 function Authentication() {
   return (
