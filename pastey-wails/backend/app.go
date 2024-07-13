@@ -12,6 +12,7 @@ import (
 	"github.com/burakdrk/pastey/pastey-wails/backend/crypto"
 	"github.com/burakdrk/pastey/pastey-wails/backend/models"
 	"github.com/burakdrk/pastey/pastey-wails/backend/storage"
+	"github.com/burakdrk/pastey/pastey-wails/backend/systray"
 	"github.com/burakdrk/pastey/pastey-wails/backend/utils"
 	"github.com/go-resty/resty/v2"
 )
@@ -24,6 +25,7 @@ type App struct {
 	storage    storage.Storage
 	clipboard  *clipboard.Clipboard
 	ws         *clipboard.WSClient
+	systray    *systray.Systray
 	isLoggedIn bool
 	deviceId   int64
 }
@@ -49,6 +51,7 @@ func NewApp() *App {
 	logger := storage.NewLogger(appConfigPath)
 	storage := storage.NewSQLiteStorage(appConfigPath)
 	ws := clipboard.NewWSClient()
+	systray := systray.NewSystray()
 	clipboard, err := clipboard.NewClipboard()
 	if err != nil {
 		logger.Log(err.Error())
@@ -68,6 +71,7 @@ func NewApp() *App {
 		Logger:     logger,
 		storage:    storage,
 		clipboard:  clipboard,
+		systray:    systray,
 		ws:         ws,
 		isLoggedIn: false,
 		deviceId:   0,
@@ -126,6 +130,7 @@ func (a *App) Startup(ctx context.Context) {
 	}
 
 	go a.ws.Listen(a.clipboard, privateKey)
+	go a.systray.Run()
 }
 
 func (a *App) Shutdown(ctx context.Context) {

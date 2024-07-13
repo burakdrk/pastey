@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.22.1
 
 require (
+	fyne.io/systray v1.11.0
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/gorilla/websocket v1.5.3
 	github.com/mattn/go-sqlite3 v1.14.22
