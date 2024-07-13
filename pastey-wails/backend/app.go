@@ -12,6 +12,7 @@ import (
 	"github.com/burakdrk/pastey/pastey-wails/backend/crypto"
 	"github.com/burakdrk/pastey/pastey-wails/backend/models"
 	"github.com/burakdrk/pastey/pastey-wails/backend/storage"
+	"github.com/burakdrk/pastey/pastey-wails/backend/systray"
 	"github.com/burakdrk/pastey/pastey-wails/backend/utils"
 	"github.com/go-resty/resty/v2"
 )
@@ -24,6 +25,7 @@ type App struct {
 	storage    storage.Storage
 	clipboard  *clipboard.Clipboard
 	ws         *clipboard.WSClient
+	systray    *systray.Systray
 	isLoggedIn bool
 	deviceId   int64
 }
@@ -31,7 +33,7 @@ type App struct {
 // NewApp creates a new App application struct
 func NewApp() *App {
 	client := resty.New()
-	client.SetBaseURL("https://api.burakduruk.com/v1")
+	client.SetBaseURL(utils.BASE_URL)
 	client.SetHeader("Accept", "application/json")
 	client.SetHeader("Content-Type", "application/json")
 
@@ -49,25 +51,20 @@ func NewApp() *App {
 	logger := storage.NewLogger(appConfigPath)
 	storage := storage.NewSQLiteStorage(appConfigPath)
 	ws := clipboard.NewWSClient()
+	systray := systray.NewSystray()
+
 	clipboard, err := clipboard.NewClipboard()
 	if err != nil {
 		logger.Log(err.Error())
 		panic(err)
 	}
 
-	client.OnBeforeRequest(func(c *resty.Client, req *resty.Request) error {
-		if req.URL == "/token/refresh" {
-			return nil
-		}
-
-		return utils.AccessTokenMiddleware(c, req, storage)
-	})
-
 	return &App{
 		api:        client,
 		Logger:     logger,
 		storage:    storage,
 		clipboard:  clipboard,
+		systray:    systray,
 		ws:         ws,
 		isLoggedIn: false,
 		deviceId:   0,
@@ -78,14 +75,30 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
-	a.clipboard.Start(ctx, a.copyClipboard)
+
+	a.api.OnBeforeRequest(func(c *resty.Client, req *resty.Request) error {
+		if req.URL == "/token/refresh" {
+			return nil
+		}
+
+		token, err := a.getAccessToken()
+		if err != nil {
+			return err
+		}
+
+		req.Header.Set("Authorization", "Bearer "+token)
+		return nil
+	})
+
+	a.clipboard.Listen(ctx, a.copyClipboard)
+	go a.systray.Run(ctx)
 
 	expiry, err := a.storage.Get("refresh_token_expiry")
 	if err != nil {
 		return
 	}
 
-	parsedExpiry, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", expiry)
+	parsedExpiry, err := time.Parse(utils.DATE_FORMAT, expiry)
 	if err != nil {
 		a.Logger.Log(err.Error())
 		return
@@ -107,25 +120,7 @@ func (a *App) Startup(ctx context.Context) {
 	}
 
 	a.deviceId = deviceId
-
-	token, err := a.storage.Get("access_token")
-	if err != nil {
-		return
-	}
-
-	err = a.ws.Connect(ctx, fmt.Sprintf("wss://api.burakduruk.com/v1/ws?device_id=%d", deviceId), token)
-	if err != nil {
-		a.Logger.Log(err.Error())
-		return
-	}
-
-	privateKey, err := a.storage.Get("private_key")
-	if err != nil {
-		a.Logger.Log(err.Error())
-		return
-	}
-
-	go a.ws.Listen(a.clipboard, privateKey)
+	a.ConnectToWS()
 }
 
 func (a *App) Shutdown(ctx context.Context) {
@@ -135,6 +130,10 @@ func (a *App) Shutdown(ctx context.Context) {
 
 func (a *App) GetIsLoggedIn() bool {
 	return a.isLoggedIn
+}
+
+func (a *App) GetDeviceId() int64 {
+	return a.deviceId
 }
 
 func (a *App) GetConnectionStatus() bool {
@@ -351,5 +350,75 @@ func (a *App) DeleteEntry(entryId string) models.Error {
 		return errResp
 	}
 
+	return models.Error{}
+}
+
+func (a *App) getAccessToken() (string, error) {
+	token, err := a.storage.Get("access_token")
+	if err != nil {
+		return "", err
+	}
+
+	expiry, err := a.storage.Get("access_token_expiry")
+	if err != nil {
+		return "", err
+	}
+
+	parsedExpiry, err := time.Parse(utils.DATE_FORMAT, expiry)
+	if err != nil {
+		return "", err
+	}
+
+	if time.Now().UTC().After(parsedExpiry) {
+		refreshToken, err := a.storage.Get("refresh_token")
+		if err != nil {
+			return "", err
+		}
+
+		var errResp models.Error
+		var refreshResp models.RefreshTokenResponse
+
+		res, err := a.api.R().
+			SetBody(map[string]string{
+				"refresh_token": refreshToken,
+			}).
+			SetError(&errResp).
+			SetResult(&refreshResp).
+			Post("/token/refresh")
+		if err != nil {
+			return "", err
+		}
+
+		if res.IsError() {
+			return "", fmt.Errorf("error refreshing token: %s", errResp.Message)
+		}
+
+		a.storage.Save("access_token", refreshResp.AccessToken)
+		a.storage.Save("access_token_expiry", refreshResp.AccessTokenExpiresAt.String())
+		token = refreshResp.AccessToken
+	}
+
+	return token, nil
+}
+
+func (a *App) ConnectToWS() models.Error {
+	token, err := a.getAccessToken()
+	if err != nil {
+		return models.Error{Message: err.Error()}
+	}
+
+	err = a.ws.Connect(a.ctx, fmt.Sprintf("%s?device_id=%d", utils.WEB_SOCKET_URL, a.deviceId), token)
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return models.Error{Message: err.Error()}
+	}
+
+	privateKey, err := a.storage.Get("private_key")
+	if err != nil {
+		a.Logger.Log(err.Error())
+		return models.Error{Message: err.Error()}
+	}
+
+	go a.ws.Listen(a.clipboard, privateKey)
 	return models.Error{}
 }

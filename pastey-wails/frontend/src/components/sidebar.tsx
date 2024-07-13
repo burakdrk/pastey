@@ -2,8 +2,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Button } from "@/components/ui/button";
 import { Home, CircleUserRound, ClipboardList, LifeBuoy, Settings } from "lucide-react";
 import { BrowserOpenURL } from "../../wailsjs/runtime";
-import { globalState, pages } from "@/lib/store";
+import { globalState } from "@/lib/store";
 import { useAtom } from "jotai";
+import { pages } from "@/lib/types";
 
 function Sidebar() {
   const [pageStack, setPageStack] = useAtom(globalState.pageStack);

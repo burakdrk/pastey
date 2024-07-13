@@ -3,6 +3,7 @@ package storage
 import (
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type Logger struct {
@@ -24,7 +25,7 @@ func (l *Logger) Log(message string) {
 	}
 	defer file.Close()
 
-	if _, err := file.WriteString(message + "\n"); err != nil {
+	if _, err := file.WriteString(time.Now().String() + ": " + message + "\n"); err != nil {
 		panic(err)
 	}
 }

@@ -1,10 +1,12 @@
 import { Badge } from "./ui/badge";
 import { WindowToggleMaximise, WindowMinimise, WindowHide, EventsOn, EventsOff } from "../../wailsjs/runtime";
 import { useEffect, useState } from "react";
-import { GetConnectionStatus } from "../../wailsjs/go/backend/App";
+import { GetConnectionStatus, ConnectToWS } from "../../wailsjs/go/backend/App";
 
 function Header() {
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(true);
+
   let paddingString = "pl-20";
 
   if (window.navigator.userAgent.includes("Windows")) {
@@ -18,12 +20,29 @@ function Header() {
 
     GetConnectionStatus().then((res) => {
       setIsConnected(res);
+      setIsConnecting(false);
     });
 
     return () => {
       EventsOff("ws:disconnected");
     };
   }, []);
+
+  async function connect() {
+    if (isConnecting || isConnected) {
+      return;
+    }
+
+    setIsConnecting(true);
+
+    const err = await ConnectToWS();
+
+    if (!err.error) {
+      setIsConnected(true);
+    }
+
+    setIsConnecting(false);
+  }
 
   return (
     <header
@@ -33,8 +52,17 @@ function Header() {
       onDoubleClick={() => WindowToggleMaximise()}
     >
       <h1 className="text-xl font-semibold flex-1">Pastey</h1>
-      <Badge variant="outline" className={`${isConnected ? "bg-green-700" : "bg-red-600"} mr-3`}>
-        {isConnected ? "Connected" : "Disconnected"}
+      <Badge
+        variant="outline"
+        className={`${isConnecting ? "bg-yellow-500" : isConnected ? "bg-green-700" : "bg-red-600"} mr-3 ${
+          !isConnecting && !isConnected && "cursor-pointer"
+        }`}
+        // @ts-ignore
+        style={{ "--wails-draggable": "no-drag" }}
+        onDoubleClick={(e) => e.stopPropagation()}
+        onClick={() => connect()}
+      >
+        {isConnecting ? "Connecting" : isConnected ? "Connected" : "Disconnected"}
       </Badge>
       {window.navigator.userAgent.includes("Windows") && (
         <div

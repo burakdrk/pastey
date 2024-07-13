@@ -13,14 +13,13 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-var mu sync.Mutex
-
 // WSClient struct
 type WSClient struct {
 	conn        *websocket.Conn
 	ctx         context.Context
 	ticker      *time.Ticker
 	isConnected bool
+	mu          sync.Mutex
 }
 
 type WSEntry struct {
@@ -80,6 +79,7 @@ func (c *WSClient) Close() error {
 	return c.conn.Close()
 }
 
+// Blocking, call this in a goroutine
 func (c *WSClient) Listen(clipboard *Clipboard, privateKey string) {
 	for {
 		_, message, err := c.conn.ReadMessage()
@@ -103,18 +103,19 @@ func (c *WSClient) Listen(clipboard *Clipboard, privateKey string) {
 		}
 
 		clipboard.Set(decrypted)
+		entry.EncryptedData = decrypted
 		runtime.EventsEmit(c.ctx, "ws:entry", entry)
 	}
 }
 
 func (c *WSClient) setIsConnected(isConnected bool) {
-	mu.Lock()
-	defer mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.isConnected = isConnected
 }
 
 func (c *WSClient) GetIsConnected() bool {
-	mu.Lock()
-	defer mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.isConnected
 }

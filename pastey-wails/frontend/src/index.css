@@ -78,3 +78,23 @@ body {
 .dark {
   color-scheme: dark;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #313131;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #292929;
+}
