@@ -6,19 +6,22 @@ import Root from "./pages/Root";
 import Authentication from "./pages/Authentication";
 import Header from "./components/header";
 import { useEffect, useState } from "react";
-import { GetIsLoggedIn } from "../wailsjs/go/backend/App";
+import { GetDeviceId, GetIsLoggedIn } from "../wailsjs/go/backend/App";
 import Splash from "./pages/Splash";
 import { sleep } from "./lib/utils";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(globalState.isLoggedIn);
+  const [, setDeviceId] = useAtom(globalState.deviceId);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function checkLogin() {
       const loggedIn = await GetIsLoggedIn();
+      const deviceId = await GetDeviceId();
       await sleep(1000);
       setIsLoggedIn(loggedIn);
+      setDeviceId(deviceId);
       setLoading(false);
     }
 

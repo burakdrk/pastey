@@ -3,9 +3,13 @@
 import {models} from '../models';
 import {backend} from '../models';
 
+export function ConnectToWS():Promise<models.Error>;
+
 export function DeleteEntry(arg1:string):Promise<models.Error>;
 
 export function GetConnectionStatus():Promise<boolean>;
+
+export function GetDeviceId():Promise<number>;
 
 export function GetDevices():Promise<Array<models.Device>|models.Error>;
 

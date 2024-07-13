@@ -1,21 +1,26 @@
 package systray
 
 import (
+	"context"
+	"runtime"
+
 	"fyne.io/systray"
 	"fyne.io/systray/example/icon"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Systray struct {
-	quit chan struct{}
+	ctx context.Context
 }
 
 func NewSystray() *Systray {
-	return &Systray{
-		quit: make(chan struct{}),
-	}
+	return &Systray{}
 }
 
-func (s *Systray) Run() {
+func (s *Systray) Run(ctx context.Context) {
+	s.ctx = ctx
+	runtime.LockOSThread()
+
 	systray.Run(s.onReady, s.onExit)
 }
 
@@ -23,15 +28,24 @@ func (s *Systray) onReady() {
 	systray.SetIcon(icon.Data)
 	systray.SetTooltip("Pastey")
 
-	mQuit := systray.AddMenuItem("Quit", "Quit Pastey")
+	mOpen := systray.AddMenuItem("Open", "Open the app")
+	mHide := systray.AddMenuItem("Hide", "Hide the app")
+	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 
 	go func() {
-		<-mQuit.ClickedCh
-		s.quit <- struct{}{}
+		for {
+			select {
+			case <-mQuit.ClickedCh:
+				s.onExit()
+			case <-mHide.ClickedCh:
+				wailsRuntime.Hide(s.ctx)
+			case <-mOpen.ClickedCh:
+				wailsRuntime.Show(s.ctx)
+			}
+		}
 	}()
 }
 
 func (s *Systray) onExit() {
-	close(s.quit)
-	systray.Quit()
+	wailsRuntime.Quit(s.ctx)
 }

@@ -6,6 +6,9 @@ import { models } from "wailsjs/go/models";
 import { formatDateToLocalTime } from "@/lib/utils";
 import { EventsOn, EventsOff } from "../../wailsjs/runtime/runtime";
 import { RefreshCcw } from "lucide-react";
+import { useAtom } from "jotai";
+import { globalState } from "@/lib/store";
+import { EntryEvent } from "@/lib/types";
 
 function Clipboard() {
   async function getEntries() {
@@ -52,11 +55,12 @@ function Clipboard() {
 
   const [entries, setEntries] = useState<models.Entry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deviceId] = useAtom(globalState.deviceId);
 
   useEffect(() => {
     getEntries();
 
-    EventsOn("ws:entry", (data: any) => {
+    EventsOn("ws:entry", (data: EntryEvent) => {
       console.log(data);
     });
 
@@ -92,6 +96,7 @@ function Clipboard() {
                 <div className="font-medium">{entry.from_device_name}</div>
                 <div className="hidden text-sm text-muted-foreground md:inline">
                   {formatDateToLocalTime(entry.created_at)}
+                  {entry.from_device_id === deviceId && <div>This device</div>}
                 </div>
               </TableCell>
               <TableCell className="break-all">{entry.encrypted_data}</TableCell>
